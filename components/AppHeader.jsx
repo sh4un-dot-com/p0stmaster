@@ -72,8 +72,10 @@ const AppHeader = ({
     </nav>
 
     {saveBanner && (
-      <div className="fixed right-6 top-20 z-50 rounded-2xl bg-emerald-500/15 border border-emerald-400 text-emerald-200 px-5 py-3 shadow-2xl backdrop-blur-md">
-        {saveBanner}
+      <div data-overlay="true" className="fixed inset-x-0 top-20 z-[110] flex justify-center px-4 pointer-events-none">
+        <div className="max-w-xl rounded-2xl border border-emerald-300/70 bg-emerald-500/18 px-5 py-3 text-sm font-semibold text-emerald-100 shadow-2xl backdrop-blur-md">
+          {saveBanner}
+        </div>
       </div>
     )}
   </>

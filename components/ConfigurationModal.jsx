@@ -32,7 +32,7 @@ const ConfigurationModal = ({
   const isAyrshareReady = Boolean(draftClient.socialKeys.ayrshare && draftClient.socialKeys.ayrshare.trim());
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div data-overlay="true" className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className={`${theme.card} border border-slate-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]`}>
         <div className="flex items-center justify-between p-6 border-b border-slate-800 shrink-0">
           <h3 className="text-lg font-bold flex items-center gap-2">
