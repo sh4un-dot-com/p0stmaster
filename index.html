@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>p0stmaster</title>
+    <meta name="theme-color" content="#050816" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="tailwind.css" />
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body, #root {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+        background: #020617;
+      }
+
+      .app-shell {
+        position: relative;
+        isolation: isolate;
+      }
+
+      .app-shell::before,
+      .app-shell::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .app-shell::before {
+        inset: -10%;
+        background:
+          radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.26), transparent 24%),
+          radial-gradient(circle at 85% 16%, rgba(56, 189, 248, 0.18), transparent 24%),
+          radial-gradient(circle at 62% 84%, rgba(236, 72, 153, 0.16), transparent 24%),
+          linear-gradient(180deg, rgba(2, 6, 23, 0.82), rgba(2, 6, 23, 0.96));
+        filter: blur(6px);
+      }
+
+      .app-shell::after {
+        opacity: 0.08;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.6) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: radial-gradient(circle at center, black 32%, transparent 82%);
+      }
+
+      .app-shell > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .app-shell h1,
+      .app-shell h2,
+      .app-shell h3,
+      .app-shell .font-bold.text-xl {
+        font-family: 'Sora', 'Space Grotesk', sans-serif;
+      }
+
+      .app-shell--light {
+        color-scheme: light;
+      }
+
+      .app-shell--light::before {
+        background:
+          radial-gradient(circle at 15% 16%, rgba(79, 70, 229, 0.18), transparent 24%),
+          radial-gradient(circle at 85% 15%, rgba(14, 165, 233, 0.14), transparent 24%),
+          radial-gradient(circle at 55% 78%, rgba(236, 72, 153, 0.12), transparent 24%),
+          linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(226, 232, 240, 0.98));
+      }
+
+      .app-shell--light::after {
+        opacity: 0.06;
+        background-image:
+          linear-gradient(rgba(15, 23, 42, 0.45) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(15, 23, 42, 0.45) 1px, transparent 1px);
+      }
+
+      .app-shell--fm {
+        color-scheme: dark;
+      }
+
+      .app-shell--fm::before {
+        background:
+          radial-gradient(circle at 14% 18%, rgba(168, 85, 247, 0.3), transparent 24%),
+          radial-gradient(circle at 84% 14%, rgba(236, 72, 153, 0.24), transparent 24%),
+          radial-gradient(circle at 60% 84%, rgba(244, 114, 182, 0.18), transparent 22%),
+          linear-gradient(180deg, rgba(5, 1, 14, 0.96), rgba(13, 5, 24, 0.98));
+      }
+
+      .app-shell--fm::after {
+        opacity: 0.1;
+        background-image:
+          linear-gradient(rgba(236, 72, 153, 0.4) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(192, 132, 252, 0.35) 1px, transparent 1px);
+      }
+
+      .app-shell--fm h1,
+      .app-shell--fm h2,
+      .app-shell--fm h3,
+      .app-shell--fm .font-bold.text-xl {
+        font-family: 'Cinzel', serif;
+        letter-spacing: 0.04em;
+      }
+
+      .app-shell--light [class*='bg-slate-900'] { background-color: rgba(255, 255, 255, 0.82) !important; }
+      .app-shell--light [class*='bg-slate-800'] { background-color: rgba(241, 245, 249, 0.9) !important; }
+      .app-shell--light [class*='bg-slate-700'] { background-color: rgba(226, 232, 240, 0.92) !important; }
+      .app-shell--light [class*='bg-black'] { background-color: rgba(248, 250, 252, 0.96) !important; }
+      .app-shell--light [class*='border-slate-800'],
+      .app-shell--light [class*='border-slate-700'] { border-color: rgba(203, 213, 225, 0.95) !important; }
+      .app-shell--light [class*='text-slate-500'],
+      .app-shell--light [class*='text-slate-400'] { color: #64748b !important; }
+      .app-shell--light [class*='text-slate-300'],
+      .app-shell--light [class*='text-slate-200'],
+      .app-shell--light [class*='text-slate-100'],
+      .app-shell--light [class*='text-white'] { color: #0f172a !important; }
+      .app-shell--light [class*='text-black'] { color: #0f172a !important; }
+      .app-shell--light [class*='shadow-2xl'],
+      .app-shell--light [class*='shadow-xl'] { box-shadow: 0 28px 90px rgba(15, 23, 42, 0.12) !important; }
+      .app-shell--light input,
+      .app-shell--light select,
+      .app-shell--light textarea {
+        background: rgba(255, 255, 255, 0.92) !important;
+        color: #0f172a !important;
+        border-color: rgba(203, 213, 225, 0.95) !important;
+      }
+      .app-shell--light input::placeholder,
+      .app-shell--light textarea::placeholder {
+        color: #94a3b8 !important;
+      }
+
+      .app-shell--fm [class*='bg-slate-900'] { background-color: rgba(24, 10, 35, 0.84) !important; }
+      .app-shell--fm [class*='bg-slate-800'] { background-color: rgba(34, 15, 53, 0.86) !important; }
+      .app-shell--fm [class*='bg-slate-700'] { background-color: rgba(58, 24, 84, 0.88) !important; }
+      .app-shell--fm [class*='bg-black'] { background-color: rgba(11, 4, 19, 0.94) !important; }
+      .app-shell--fm [class*='border-slate-800'],
+      .app-shell--fm [class*='border-slate-700'] { border-color: rgba(236, 72, 153, 0.28) !important; }
+      .app-shell--fm [class*='text-slate-500'] { color: rgba(233, 213, 255, 0.6) !important; }
+      .app-shell--fm [class*='text-slate-400'] { color: rgba(244, 208, 255, 0.74) !important; }
+      .app-shell--fm [class*='text-slate-300'],
+      .app-shell--fm [class*='text-slate-200'],
+      .app-shell--fm [class*='text-slate-100'],
+      .app-shell--fm [class*='text-white'] { color: #fdf2ff !important; }
+      .app-shell--fm [class*='text-indigo-300'],
+      .app-shell--fm [class*='text-indigo-400'] { color: #ff7ce2 !important; }
+      .app-shell--fm [class*='border-indigo-500'] { border-color: rgba(236, 72, 153, 0.56) !important; }
+      .app-shell--fm [class*='bg-indigo-500'],
+      .app-shell--fm [class*='bg-indigo-600'] {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.96), rgba(236, 72, 153, 0.92)) !important;
+      }
+      .app-shell--fm [class*='shadow-2xl'],
+      .app-shell--fm [class*='shadow-xl'] { box-shadow: 0 30px 95px rgba(236, 72, 153, 0.16) !important; }
+      .app-shell--fm input,
+      .app-shell--fm select,
+      .app-shell--fm textarea {
+        background: rgba(18, 7, 29, 0.94) !important;
+        color: #fdf2ff !important;
+        border-color: rgba(236, 72, 153, 0.3) !important;
+      }
+      .app-shell--fm input::placeholder,
+      .app-shell--fm textarea::placeholder {
+        color: rgba(244, 208, 255, 0.45) !important;
+      }
+
+      .app-shell button:focus-visible,
+      .app-shell input:focus-visible,
+      .app-shell select:focus-visible,
+      .app-shell textarea:focus-visible,
+      .app-shell a:focus-visible {
+        outline: 2px solid rgba(129, 140, 248, 0.95);
+        outline-offset: 2px;
+      }
+
+      .app-shell--fm button:focus-visible,
+      .app-shell--fm input:focus-visible,
+      .app-shell--fm select:focus-visible,
+      .app-shell--fm textarea:focus-visible,
+      .app-shell--fm a:focus-visible {
+        outline-color: rgba(236, 72, 153, 0.92);
+      }
+
+      .theme-pill {
+        min-width: 56px;
+      }
+
+      .app-shell--dark .theme-pill--active {
+        background: linear-gradient(135deg, #eef2ff, #c7d2fe) !important;
+        color: #020617 !important;
+      }
+
+      .app-shell--light .theme-pill--active {
+        background: linear-gradient(135deg, #4f46e5, #8b5cf6) !important;
+        color: white !important;
+      }
+
+      .app-shell--fm .theme-pill--active {
+        background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
+        color: #fff1fb !important;
+      }
+
+      ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.14);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.35);
+        border-radius: 999px;
+        border: 3px solid transparent;
+        background-clip: padding-box;
+      }
+
+      .app-shell--fm ::-webkit-scrollbar-thumb {
+        background: rgba(236, 72, 153, 0.42);
+        background-clip: padding-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="bundle.js"></script>
+  </body>
+</html>
