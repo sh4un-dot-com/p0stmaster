@@ -27,11 +27,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build web assets
-        run: npm run build
-
-      - name: Package macOS desktop artifacts
-        run: npx electron-builder --mac dmg zip --publish never -c.directories.output=release
+      - name: Build macOS desktop artifacts
+        run: npm run desktop:mac
 
       - name: List packaged files
         run: |

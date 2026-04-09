@@ -1,5 +1,7 @@
 {
   "name": "p0stmaster",
+  "version": "0.1.0",
+  "description": "Desktop and web workspace for planning, adapting, and publishing social content.",
   "private": true,
   "type": "module",
   "main": "electron/main.js",
@@ -10,7 +12,7 @@
     "serve": "node ./serve.js",
     "start": "npm run build && npm run serve",
     "desktop": "npm run build && electron .",
-    "desktop:mac": "npm run build && electron-builder --mac dmg zip"
+    "desktop:mac": "npm run build && electron-builder --mac dmg zip --publish never"
   },
   "dependencies": {
     "lucide-react": "^0.499.0",
@@ -30,6 +32,9 @@
   "build": {
     "appId": "com.akitaengineering.p0stmaster",
     "productName": "p0stmaster",
+    "directories": {
+      "output": "release"
+    },
     "files": [
       "dist/**/*",
       "index.html",
