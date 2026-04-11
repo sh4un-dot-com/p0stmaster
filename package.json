@@ -12,7 +12,8 @@
     "serve": "node ./serve.js",
     "start": "npm run build && npm run serve",
     "desktop": "npm run build && electron .",
-    "desktop:mac": "npm run build && electron-builder --mac dmg zip --universal --publish never"
+    "desktop:mac": "npm run build && electron-builder --mac dmg zip --universal --publish never",
+    "desktop:win": "npm run build && electron-builder --win nsis --publish never"
   },
   "dependencies": {
     "lucide-react": "^0.499.0",
@@ -47,6 +48,11 @@
       "target": [
         "dmg",
         "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
       ]
     }
   }
