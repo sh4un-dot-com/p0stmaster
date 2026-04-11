@@ -3,7 +3,7 @@ name: Desktop Build
 on:
   push:
     branches:
-      - "**"
+      - main
     tags:
       - "v*"
   workflow_dispatch:
@@ -133,17 +133,30 @@ jobs:
           version=$(node -p "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version")
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
-      - name: Update nightly release tag
+      - name: Check for version tag on this commit
         if: github.ref == 'refs/heads/main'
+        id: version_tag_check
+        shell: bash
+        run: |
+          if git tag --points-at HEAD | grep -qE '^v[0-9]'; then
+            echo "has_version_tag=true" >> "$GITHUB_OUTPUT"
+            echo "Skipping nightly — version tag already exists on this commit"
+          else
+            echo "has_version_tag=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update nightly release tag
+        if: github.ref == 'refs/heads/main' && steps.version_tag_check.outputs.has_version_tag != 'true'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git push origin :refs/tags/nightly-desktop 2>/dev/null || true
           git tag -fa nightly-desktop -m "p0stmaster desktop nightly"
-          git push origin refs/tags/nightly-desktop --force
+          git push origin refs/tags/nightly-desktop
 
       - name: Publish nightly prerelease
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && steps.version_tag_check.outputs.has_version_tag != 'true'
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
