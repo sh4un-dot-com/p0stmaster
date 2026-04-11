@@ -19,6 +19,25 @@ Each outline includes:
 
 ---
 
+## Positioning Anchors for Better AI Output
+
+Use these ideas across every flyer so the generated copy feels specific, credible, and differentiated.
+
+- **One operator cockpit, not five disconnected tools** — position p0stmaster as the control center that replaces tab chaos, copy-paste work, and seat-based SaaS sprawl
+- **AI that adds leverage after the first draft** — emphasize hooks, platform rewrites, critique, audience angles, threads, and calendars, not just "AI writing"
+- **Trend Spark = timeliness** — live feeds become usable post angles instead of passive dashboards
+- **Critique before publish = fewer weak posts** — catch soft hooks, vague CTAs, and weak platform fit before approval or publish
+- **Your keys. Your data. No seat tax.** — open source, local encrypted storage, and provider choice are practical advantages, not philosophical fluff
+
+### Prompt guardrails
+
+- Prefer concrete operator language: ship, review, adapt, approve, publish, catch, tighten, react faster
+- Show outcomes, not abstractions: fewer tabs, faster turnaround, fewer approval misses, quicker trend response, stronger hooks
+- Avoid generic phrases like "all-in-one solution", "revolutionary platform", "game-changing", and "streamline your workflow"
+- If the AI starts sounding like a startup landing page, push it toward sharper, more grounded, more specific copy
+
+---
+
 ## Flyer 1: The Agency Pitch
 
 **Target audience:** Social media agencies managing multiple clients
@@ -31,14 +50,15 @@ Each outline includes:
 
 **Key selling points:**
 1. Isolated multi-client workspaces — separate brands, credentials, and governance per client
-2. AI content generation with OpenAI, Gemini, or Claude — pick a different provider per client
-3. One-click publishing to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok
-4. Built-in approval workflows so nothing goes live without sign-off
-5. Free and open-source — no monthly seat fees eating into your margins
+2. AI Studio for drafts, hooks, platform rewrites, critique, and calendars — pick OpenAI, Gemini, or Claude per client
+3. Trend Spark turns live feed signals into timely post angles before your team falls behind the news cycle
+4. Critique plus approval workflow catches weak hooks, fuzzy CTAs, and off-brand copy before client review
+5. Publish to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok from one open-source workspace with no seat fees
 
 **Visual direction:**
 - Dark tech aesthetic with glowing indigo/purple accent
 - Split-screen mockup: composer on left, 7 platform previews on right
+- AI Studio panel visibly open with Trend Spark and Critique cards highlighted
 - Agency desk scene with multiple brand logos organized in a clean grid
 - "Before/After" concept: tangled browser tabs vs. one clean p0stmaster window
 
@@ -49,18 +69,18 @@ Each outline includes:
 ### AI Image Prompt
 
 ```
-Design a modern SaaS product flyer for "p0stmaster", a social media management desktop app.
+Design a modern operator-focused product flyer for "p0stmaster", a social media management desktop app.
 
 Style: Dark tech aesthetic, deep slate background (#0F172A), indigo (#6366F1) and white accents. Clean, minimal, premium feel.
 
 Layout:
 - Top: Bold headline "Stop Juggling Logins. Start Shipping Content." in white sans-serif
-- Center: App screenshot mockup showing a two-panel interface — content composer on the left, platform previews (Instagram, Facebook, LinkedIn, X, TikTok, YouTube, Pinterest) on the right
-- Left column: 5 bullet points with small icons (workspace, AI brain, publish arrow, checkmark shield, open-source heart)
+- Center: App screenshot mockup showing a two-panel interface — content composer on the left, platform previews (Instagram, Facebook, LinkedIn, X, TikTok, YouTube, Pinterest) on the right, with the AI Studio panel open
+- Left column: 5 bullet points with small icons (workspace grid, AI spark, trend pulse, critique shield, publish arrow)
 - Bottom: CTA button "Download Free" with GitHub URL
 - Bottom corner: "Built by Akita Engineering" in small text
 
-Mood: Professional, powerful, no-nonsense. Aimed at agencies who manage 10+ brand accounts.
+Mood: Professional, powerful, no-nonsense. Aimed at agencies who manage 10+ brand accounts and care about speed, control, and review quality.
 Dimensions: 8.5 x 11 inches, print-ready
 ```
 
@@ -69,7 +89,7 @@ Dimensions: 8.5 x 11 inches, print-ready
 ```
 Write flyer copy for p0stmaster, an open-source desktop app for social media agencies.
 
-Product: p0stmaster — a desktop and browser-based social media command center that lets agencies manage multiple client workspaces, generate AI content (OpenAI/Gemini/Claude), preview posts across 7 platforms in real time, and publish through Ayrshare — all from one window.
+Product: p0stmaster — a desktop and browser-based social media command center that lets agencies manage multiple client workspaces, use AI Studio for drafts, hooks, per-platform rewrites, critiques, and calendars (OpenAI/Gemini/Claude), preview posts across 7 platforms in real time, and publish through Ayrshare — all from one window.
 
 Target audience: Social media agency owners and managers (5-50 person agencies) who currently pay $200-500/month for per-seat SaaS tools.
 
@@ -81,6 +101,12 @@ Include:
 - 5 bullet points, each with a bold lead word and one supporting sentence
 - A one-paragraph "why switch" section
 - A clear CTA with download URL
+
+Make sure at least 2 of these differentiators appear naturally:
+- Trend Spark from live feeds
+- Critique before approval
+- Provider choice with your own keys
+- No seat-based pricing pressure
 
 Do NOT include: pricing (it's free), technical jargon, anything that sounds like a generic SaaS landing page
 ```
@@ -98,11 +124,11 @@ Do NOT include: pricing (it's free), technical jargon, anything that sounds like
 **Tagline:** Plan, write, preview, and publish — without five open tabs and a monthly bill.
 
 **Key selling points:**
-1. AI writes your first draft — you refine it in seconds
-2. See exactly how your post looks on each platform before publishing
-3. Keep client work separate from personal projects
-4. Publish to 7 platforms with one click
-5. 100% free, open-source, runs on your laptop — no account needed
+1. AI Studio writes hooks, first drafts, and rewrites when you need momentum fast
+2. Trend Spark turns headlines and feed signals into usable post ideas when the content well runs dry
+3. See exactly how your post looks on each platform before publishing
+4. Critique shows what is weak before you hit publish or send work to a client
+5. Keep client work separate and publish to 7 platforms from one free app with no sign-up
 
 **Visual direction:**
 - Warm, approachable but still tech-forward
@@ -139,7 +165,7 @@ Dimensions: Instagram story (1080x1920) and standard letter (8.5x11)
 ```
 Write flyer copy for p0stmaster targeting freelance social media managers.
 
-Product: A free, open-source desktop app that combines AI content generation, multi-platform previews, and one-click publishing to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok.
+Product: A free, open-source desktop app that combines AI Studio drafting, hooks, critique, and rewrites, multi-platform previews, and one-click publishing to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok.
 
 Target audience: Solo freelancers and small content creators who manage 1-5 client accounts and currently piece together workflows with native platform tools, Google Docs, and Canva.
 
@@ -150,6 +176,11 @@ Include:
 - 5 benefit-focused bullet points (lead with outcomes, not features)
 - A short testimonial-style quote (fictional, but realistic)
 - A CTA that removes friction ("No sign-up. Just download and go.")
+
+Work in one concrete differentiator beyond basic drafting:
+- Trend Spark for idea generation
+- critique-before-publish
+- per-platform rewrites
 
 Format: Ready to paste into Canva or a flyer design tool
 ```
@@ -168,11 +199,11 @@ Format: Ready to paste into Canva or a flyer design tool
 
 **Key selling points:**
 1. Built-in approval workflow: draft → review → approve → publish
-2. Brand safety scanning and compliance warnings before content goes live
-3. Separate workspaces per product line, region, or department
-4. AI drafting with your choice of provider — your API keys, your data
-5. Encrypted local storage — no content leaves your machine until you publish
-6. Open-source — audit the code, run it behind your firewall
+2. AI critique catches weak claims, vague CTAs, and weak platform fit before reviewers see the draft
+3. Brand safety scanning and compliance warnings before content goes live
+4. Separate workspaces per product line, region, or department
+5. AI Studio with your choice of provider — your API keys, your data
+6. Encrypted local storage plus open-source code — audit it, control it, run it behind your firewall
 
 **Visual direction:**
 - Corporate-clean, trust-oriented design
@@ -208,7 +239,7 @@ Dimensions: 8.5 x 11 inches, print-ready with bleed
 ```
 Write flyer copy for p0stmaster aimed at in-house marketing teams at mid-size companies (200-2000 employees).
 
-Product: An open-source, self-hosted social media workspace with built-in approval workflows, brand safety scanning, multi-workspace isolation, AI content generation (OpenAI/Gemini/Claude), and live publishing to 7 platforms.
+Product: An open-source, self-hosted social media workspace with built-in approval workflows, critique-driven review, brand safety scanning, multi-workspace isolation, AI Studio workflows (OpenAI/Gemini/Claude), and live publishing to 7 platforms.
 
 Target audience: Marketing directors and team leads who need governance controls, are concerned about data leaving the org, and are tired of paying per-seat SaaS fees for social media tools.
 
@@ -221,6 +252,8 @@ Include:
 - A comparison blurb: "Why not [typical SaaS]?" — addressing cost, data control, and lock-in
 - A CTA aimed at evaluation ("Download and evaluate on your own machine today")
 
+Make AI sound controlled and reviewable, not flashy. Emphasize provider choice, critique-before-approval, and data control.
+
 Avoid: Casual language, "disruptive" claims, anything that sounds like a startup pitch
 ```
 
@@ -232,7 +265,7 @@ Avoid: Casual language, "disruptive" claims, anything that sounds like a startup
 
 ### Content outline
 
-**Headline:** Seven Platforms. Three AI Engines. One App.
+**Headline:** Seven Platforms. AI Studio. One App.
 
 **Tagline:** The open-source social media workspace that does what the $500/month tools do — for free.
 
@@ -241,12 +274,12 @@ Avoid: Casual language, "disruptive" claims, anything that sounds like a startup
 | Tile | Icon | Caption |
 |---|---|---|
 | Multi-client workspaces | Grid icon | Separate brands, keys, and rules per client |
-| AI content generation | Brain icon | ChatGPT, Gemini, or Claude — your pick |
+| AI Studio | Brain icon | Drafts, hooks, critiques, rewrites, and calendars with ChatGPT, Gemini, or Claude |
 | Live platform previews | Eye icon | See your post on 7 platforms before publishing |
 | One-click publishing | Send icon | Ayrshare-powered delivery to all platforms |
 | Approval workflows | Checkmark icon | Draft → review → approve → publish |
 | Brand kit analysis | Palette icon | Upload a logo, extract your colour palette |
-| Live Feed Pulse | RSS icon | RSS, Atom, and YouTube feed monitoring |
+| Live Feed Pulse | RSS icon | RSS, Atom, and YouTube monitoring plus Trend Spark ideas |
 | Encrypted storage | Lock icon | AES-256-GCM — your data stays local |
 | Desktop + browser | Monitor icon | Electron app or localhost — your choice |
 
@@ -269,18 +302,36 @@ Design a bold feature-showcase flyer for "p0stmaster", a free open-source social
 Style: Dark, premium tech product sheet. Black (#000) background, indigo (#6366F1) and fuchsia (#D946EF) neon accents, white text.
 
 Layout:
-- Top: Headline "Seven Platforms. Three AI Engines. One App." in large bold white text
+- Top: Headline "Seven Platforms. AI Studio. One App." in large bold white text
 - Subtitle: "The open-source social media workspace that does what the $500/month tools do — for free."
 - Centre: App screenshot in a floating laptop/desktop mockup with subtle glow effect
 - Below screenshot: 3x3 grid of feature tiles, each with a glowing icon and one-line description:
-  (1) Multi-client workspaces (2) AI generation (3) Live previews
+  (1) Multi-client workspaces (2) AI Studio (3) Live previews
   (4) One-click publish (5) Approval workflow (6) Brand kit
-  (7) Live feeds (8) Encrypted storage (9) Desktop + browser
+  (7) Live feeds + Trend Spark (8) Encrypted storage (9) Desktop + browser
 - Bottom bar: Platform logos (Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, TikTok) in a row
 - CTA: "Download Free" button with GitHub URL
 
 Mood: "This is a serious tool" — dense with features but visually clean
 Dimensions: 8.5 x 11 inches portrait
+```
+
+### AI Copywriter Prompt
+
+```
+Write a feature-showcase flyer for p0stmaster aimed at product-aware buyers comparing it to paid social media tools.
+
+Product: p0stmaster — an open-source social media workspace with AI Studio (drafts, hooks, critiques, per-platform rewrites, audiences, threads, and calendars), Live Feed Pulse with Trend Spark, approval workflows, encrypted local storage, and 7-platform publishing.
+
+Tone: Dense, confident, product-literate. Read like a sharp spec sheet written by someone who actually operates social workflows.
+
+Include:
+- A headline and subheadline
+- 9 short feature tiles with one-line captions
+- A short comparison/stat line
+- A CTA with the GitHub URL
+
+Avoid: Empty hype, startup clichés, generic "save time" copy with no specifics
 ```
 
 ---
@@ -294,8 +345,8 @@ Dimensions: 8.5 x 11 inches portrait
 **Headline:** Publish to 7 Platforms. One Click. $0.
 
 **Body (3 lines max):**
-AI-powered social media workspace. Open source. Desktop + browser.
-Manage clients, preview posts, publish everywhere.
+AI Studio drafts, adapts, and critiques social content from one workspace.
+Trend Spark turns live headlines into timely posts. Publish everywhere.
 No sign-up. No monthly fee. Just download and go.
 
 **Visual direction:**
@@ -332,7 +383,7 @@ Mood: Punchy, confident, scroll-stopping
 ```
 Write 3 variations of social media ad copy for p0stmaster.
 
-Product: Free, open-source desktop app for planning, previewing, and publishing social content to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok — with AI drafting and multi-client workspaces.
+Product: Free, open-source desktop app for planning, previewing, and publishing social content to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok — with AI Studio and multi-client workspaces.
 
 Format per variation:
 - Primary text (125 characters max — Facebook/Instagram feed)
@@ -343,8 +394,8 @@ Tone: Direct, benefit-focused, slightly provocative about SaaS pricing
 
 Variation angles:
 1. Lead with "free" and cost savings
-2. Lead with AI + publishing power
-3. Lead with agency/multi-client angle
+2. Lead with AI Studio + critique-driven quality
+3. Lead with agency speed + Trend Spark
 ```
 
 ---
@@ -363,7 +414,8 @@ Variation angles:
 |---|---|---|---|---|
 | Price | Free | $99-739/mo | $6-120/mo | $249-499/mo |
 | Platforms | 7 | 8+ | 6 | 8+ |
-| AI drafting | Built-in (3 providers) | Add-on | Limited | Add-on |
+| AI Studio workflows | Built-in (3 providers) | Add-on | Limited | Add-on |
+| Trend-led ideation | Live Feed Pulse + Trend Spark | Manual / separate tooling | Manual / separate tooling | Manual / separate tooling |
 | Multi-client workspaces | Unlimited | Limited by plan | Limited | Limited by plan |
 | Approval workflow | Built-in | Team plan+ | Business plan+ | All plans |
 | Data storage | Local (encrypted) | Cloud | Cloud | Cloud |
@@ -381,12 +433,12 @@ Variation angles:
 ```
 Write a one-page comparison flyer positioning p0stmaster against paid social media management tools (Hootsuite, Buffer, Sprout Social).
 
-Product: p0stmaster — free, open-source, desktop + browser social media workspace with AI drafting (3 providers), 7-platform publishing, multi-client workspaces, approval workflows, and encrypted local storage.
+Product: p0stmaster — free, open-source, desktop + browser social media workspace with AI Studio (3 providers), Trend Spark, 7-platform publishing, multi-client workspaces, approval workflows, and encrypted local storage.
 
 Format:
 - Headline comparing p0stmaster to paid alternatives
 - Brief intro paragraph (2-3 sentences) about why the comparison matters
-- Comparison table with 8 features compared across 4 tools
+- Comparison table with 9 features compared across 4 tools
 - A "When to choose p0stmaster" paragraph (3-4 sentences)
 - A "When a paid tool might be better" paragraph (1-2 sentences — shows honesty)
 - CTA to download
@@ -405,7 +457,7 @@ Tone: Fair and factual, not aggressive. The confidence comes from the feature co
 p0stmaster
 Social media, mastered.
 
-7 Platforms • 3 AI Engines • $0/month
+7 Platforms • AI Studio • $0/month
 
 github.com/AkitaEngineering/p0stmaster
 ```
@@ -415,9 +467,9 @@ github.com/AkitaEngineering/p0stmaster
 ✓ Instagram  ✓ Facebook  ✓ LinkedIn  ✓ X
 ✓ Pinterest  ✓ YouTube   ✓ TikTok
 
-✓ AI drafting (ChatGPT / Gemini / Claude)
+✓ AI Studio + Trend Spark
+✓ Approval + critique workflow
 ✓ Multi-client workspaces
-✓ Approval workflows
 ✓ Encrypted local storage
 
 Free • Open source • Desktop + browser
@@ -429,9 +481,9 @@ Built by Akita Engineering
 ```
 Design a double-sided business card (3.5 x 2 inches) for "p0stmaster" social media management app.
 
-Front: Minimal dark design (#0F172A background). "p0stmaster" in bold white. Tagline "Social media, mastered." in indigo (#6366F1). Stats line: "7 Platforms • 3 AI Engines • $0/month". GitHub URL at bottom in small mono text.
+Front: Minimal dark design (#0F172A background). "p0stmaster" in bold white. Tagline "Social media, mastered." in indigo (#6366F1). Stats line: "7 Platforms • AI Studio • $0/month". GitHub URL at bottom in small mono text.
 
-Back: Dark background. Two rows of platform names with checkmarks. Four feature bullet points. "Free • Open source • Desktop + browser" tagline. "Built by Akita Engineering" in smallest text.
+Back: Dark background. Two rows of platform names with checkmarks. Four feature bullet points including AI Studio + Trend Spark and approval + critique workflow. "Free • Open source • Desktop + browser" tagline. "Built by Akita Engineering" in smallest text.
 
 Style: Premium, minimal, developer-oriented. The kind of card you'd pick up at a tech conference.
 ```
