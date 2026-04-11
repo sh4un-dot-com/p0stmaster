@@ -1,12 +1,14 @@
 import React from 'react';
-import { ChevronRight, MoreHorizontal, Settings } from 'lucide-react';
+import { ChevronRight, Info, MoreHorizontal, Settings } from 'lucide-react';
 
 const AppHeader = ({
   theme,
   themeMode,
+  isAboutOpen,
   isQuickActionsOpen,
   saveBanner,
   onThemeChange,
+  onOpenAbout,
   onOpenConfig,
   onToggleQuickActions,
   onRefreshLiveFeeds,
@@ -32,6 +34,13 @@ const AppHeader = ({
           ))}
         </div>
         <div className="relative flex items-center gap-2">
+          <button
+            aria-label="Open about"
+            onClick={onOpenAbout}
+            className={`p-2 rounded-full transition-colors ${isAboutOpen ? 'bg-slate-800' : 'hover:bg-slate-800'}`}
+          >
+            <Info size={20} />
+          </button>
           <button aria-label="Open configuration" onClick={onOpenConfig} className="p-2 rounded-full hover:bg-slate-800 transition-colors">
             <Settings size={20} />
           </button>
@@ -44,6 +53,13 @@ const AppHeader = ({
           </button>
           {isQuickActionsOpen && (
             <div className={`absolute right-0 top-12 w-64 rounded-2xl border border-slate-800 ${theme.card} p-2 shadow-2xl`}>
+              <button
+                onClick={onOpenAbout}
+                className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-slate-200 hover:bg-slate-800"
+              >
+                <span>About p0stmaster</span>
+                <ChevronRight size={16} className="text-slate-500" />
+              </button>
               <button
                 onClick={onRefreshLiveFeeds}
                 className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-slate-200 hover:bg-slate-800"

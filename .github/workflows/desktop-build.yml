@@ -11,6 +11,9 @@ on:
 permissions:
   contents: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 concurrency:
   group: desktop-build-${{ github.ref }}
   cancel-in-progress: true
@@ -48,9 +51,9 @@ jobs:
         with:
           name: macos-artifacts-${{ github.sha }}
           path: |
-            release/**/*.dmg
-            release/**/*.zip
-            release/**/*.blockmap
+            release/*.dmg
+            release/*.zip
+            release/*.blockmap
           if-no-files-found: error
           retention-days: 14
 
@@ -86,9 +89,8 @@ jobs:
         with:
           name: windows-artifacts-${{ github.sha }}
           path: |
-            release/**/*.exe
-            release/**/*.blockmap
-            release/**/*.zip
+            release/*.exe
+            release/*.blockmap
           if-no-files-found: error
           retention-days: 14
 
@@ -152,6 +154,7 @@ jobs:
           makeLatest: false
           name: p0stmaster ${{ steps.package_version.outputs.version }} desktop nightly
           prerelease: true
+          removeArtifacts: true
           replacesArtifacts: true
           tag: nightly-desktop
 
@@ -166,5 +169,6 @@ jobs:
           makeLatest: true
           name: p0stmaster ${{ github.ref_name }}
           prerelease: false
+          removeArtifacts: true
           replacesArtifacts: true
           tag: ${{ github.ref_name }}

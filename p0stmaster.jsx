@@ -8,13 +8,16 @@ import {
   Twitter,
   Youtube,
 } from 'lucide-react';
+import packageMetadata from './package.json';
 import AppHeader from './components/AppHeader.jsx';
+import AboutModal from './components/AboutModal.jsx';
 import ComposerPanel from './components/ComposerPanel.jsx';
 import PreviewPanel from './components/PreviewPanel.jsx';
 import ConfigurationModal from './components/ConfigurationModal.jsx';
 
 const STORAGE_KEY = 'p0stmaster_vault';
 const VAULT_PASSPHRASE = 'akita-engineering-strong-vault-2026';
+const APP_VERSION = packageMetadata.version || '0.0.0';
 
 const PALETTES = {
   dark: {
@@ -184,6 +187,19 @@ const fromBase64 = (str) => Uint8Array.from(atob(str), (char) => char.charCodeAt
 const createId = () => Math.random().toString(36).slice(2, 10);
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const shortenText = (text = '', max = 140) => (text.length <= max ? text : `${text.slice(0, max - 1)}...`);
+const getElectronVersion = () => {
+  const match = window.navigator.userAgent.match(/Electron\/(\S+)/i);
+  return match ? match[1] : '';
+};
+
+const formatPlatformLabel = () => {
+  const platform = window.navigator.userAgentData?.platform || window.navigator.platform || 'Unknown';
+  if (/^win/i.test(platform)) return 'Windows';
+  if (/mac/i.test(platform)) return 'macOS';
+  if (/linux/i.test(platform)) return 'Linux';
+  return platform;
+};
+
 const isHttpUrl = (value = '') => {
   if (!value) return false;
   try {
@@ -805,6 +821,7 @@ const App = () => {
   const [logoFile, setLogoFile] = useState(null);
   const [brandKitImageUrl, setBrandKitImageUrl] = useState('');
   const [brandKitExtras, setBrandKitExtras] = useState(null);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [configTab, setConfigTab] = useState('ai');
   const [isSavingConfig, setIsSavingConfig] = useState(false);
@@ -827,6 +844,19 @@ const App = () => {
   const fileInputRef = useRef(null);
   const feedRequestRef = useRef(0);
   const theme = useMemo(() => PALETTES[themeMode] || PALETTES.dark, [themeMode]);
+  const aboutInfo = useMemo(() => {
+    const electronVersion = getElectronVersion();
+    const runtimeLabel = electronVersion ? 'Desktop build' : 'Browser preview';
+
+    return {
+      appVersion: APP_VERSION,
+      runtimeLabel,
+      platformLabel: formatPlatformLabel(),
+      runtimeDetails: electronVersion
+        ? `Electron ${electronVersion}`
+        : 'Running in a standard browser session',
+    };
+  }, []);
 
   useEffect(() => {
     const hydrate = async () => {
@@ -1199,9 +1229,25 @@ const App = () => {
 
   const openConfig = () => {
     setIsQuickActionsOpen(false);
+    setIsAboutOpen(false);
     setConfigDraft(cloneValue(config));
     setIsConfigOpen(true);
   };
+
+  const openAbout = () => {
+    setIsQuickActionsOpen(false);
+    setIsConfigOpen(false);
+    setIsAboutOpen(true);
+  };
+
+  useEffect(() => {
+    const handleOpenAbout = () => {
+      openAbout();
+    };
+
+    window.addEventListener('p0stmaster:open-about', handleOpenAbout);
+    return () => window.removeEventListener('p0stmaster:open-about', handleOpenAbout);
+  }, []);
 
   const saveConfiguration = async () => {
     setIsSavingConfig(true);
@@ -1524,12 +1570,14 @@ const App = () => {
       <AppHeader
         theme={theme}
         themeMode={themeMode}
+        isAboutOpen={isAboutOpen}
         isQuickActionsOpen={isQuickActionsOpen}
         saveBanner={saveBanner}
         onThemeChange={(mode) => {
           setThemeMode(mode);
           setIsQuickActionsOpen(false);
         }}
+        onOpenAbout={openAbout}
         onOpenConfig={openConfig}
         onToggleQuickActions={() => setIsQuickActionsOpen((prev) => !prev)}
         onRefreshLiveFeeds={() => handleRefreshLiveFeeds()}
@@ -1620,6 +1668,14 @@ const App = () => {
         <span>Akita Engineering</span>
         <span>© {new Date().getFullYear()} p0stmaster</span>
       </footer>
+
+      <AboutModal
+        isOpen={isAboutOpen}
+        theme={theme}
+        themeMode={themeMode}
+        aboutInfo={aboutInfo}
+        onClose={() => setIsAboutOpen(false)}
+      />
 
       <ConfigurationModal
         isOpen={isConfigOpen}
