@@ -129,7 +129,7 @@
       .app-shell--light [class*='text-black'] { color: #0f172a !important; }
       .app-shell--light [class*='shadow-2xl'],
       .app-shell--light [class*='shadow-xl'] { box-shadow: 0 28px 90px rgba(15, 23, 42, 0.12) !important; }
-      .app-shell--light input,
+      .app-shell--light input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='color']),
       .app-shell--light select,
       .app-shell--light textarea {
         background: rgba(255, 255, 255, 0.92) !important;
@@ -162,12 +162,22 @@
       }
       .app-shell--fm [class*='shadow-2xl'],
       .app-shell--fm [class*='shadow-xl'] { box-shadow: 0 30px 95px rgba(236, 72, 153, 0.16) !important; }
-      .app-shell--fm input,
+      .app-shell--fm input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='color']),
       .app-shell--fm select,
       .app-shell--fm textarea {
         background: rgba(18, 7, 29, 0.94) !important;
         color: #fdf2ff !important;
         border-color: rgba(236, 72, 153, 0.3) !important;
+      }
+      .app-shell input[type='checkbox'],
+      .app-shell input[type='radio'] {
+        accent-color: #6366f1;
+        cursor: pointer;
+      }
+
+      .app-shell--fm input[type='checkbox'],
+      .app-shell--fm input[type='radio'] {
+        accent-color: #ec4899;
       }
       .app-shell--fm input::placeholder,
       .app-shell--fm textarea::placeholder {

@@ -32,6 +32,11 @@ const ConfigurationModal = ({
   } = handlers;
   const { PLATFORMS } = constants;
   const isAyrshareReady = Boolean(draftClient.socialKeys.ayrshare && draftClient.socialKeys.ayrshare.trim());
+  const getToggleCardClass = (isChecked) => (`rounded-2xl border p-3 flex items-center justify-between gap-3 transition-colors ${isChecked
+    ? 'border-indigo-500/60 bg-indigo-500/10 shadow-[0_0_0_1px_rgba(99,102,241,0.15)]'
+    : 'border-slate-800 bg-slate-800 hover:border-slate-700'}`);
+  const getToggleTextClass = (isChecked) => (isChecked ? 'text-indigo-200' : 'text-slate-400');
+  const toggleInputClassName = 'h-4 w-4 shrink-0 rounded border-slate-600 bg-black accent-indigo-500 text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0';
 
   return (
     <div data-overlay="true" className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
@@ -287,8 +292,8 @@ const ConfigurationModal = ({
                           <option value="news">News Feed</option>
                         </select>
                       </div>
-                      <label className="rounded-2xl border border-slate-800 bg-slate-800 p-3 flex items-center justify-between gap-3">
-                        <span className="text-xs uppercase text-slate-400">Enabled</span>
+                      <label className={getToggleCardClass(source.enabled)}>
+                        <span className={`text-xs uppercase ${getToggleTextClass(source.enabled)}`}>Enabled</span>
                         <input
                           type="checkbox"
                           checked={source.enabled}
@@ -296,7 +301,7 @@ const ConfigurationModal = ({
                             ...client,
                             feedSources: (client.feedSources || []).map((item) => item.id === source.id ? { ...item, enabled: event.target.checked } : item),
                           }))}
-                          className="h-4 w-4 rounded"
+                          className={toggleInputClassName}
                         />
                       </label>
                     </div>
@@ -489,8 +494,8 @@ const ConfigurationModal = ({
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <label className="rounded-2xl border border-slate-800 bg-slate-800 p-3 flex items-center justify-between gap-3">
-                    <span className="text-xs uppercase text-slate-400">Approval required</span>
+                  <label className={getToggleCardClass(draftClient.governance.approvalRequired)}>
+                    <span className={`text-xs uppercase ${getToggleTextClass(draftClient.governance.approvalRequired)}`}>Approval required</span>
                     <input
                       type="checkbox"
                       checked={draftClient.governance.approvalRequired}
@@ -498,11 +503,11 @@ const ConfigurationModal = ({
                         ...client,
                         governance: { ...client.governance, approvalRequired: event.target.checked },
                       }))}
-                      className="h-4 w-4 rounded"
+                      className={toggleInputClassName}
                     />
                   </label>
-                  <label className="rounded-2xl border border-slate-800 bg-slate-800 p-3 flex items-center justify-between gap-3">
-                    <span className="text-xs uppercase text-slate-400">Brand-safe mode</span>
+                  <label className={getToggleCardClass(draftClient.governance.brandSafe)}>
+                    <span className={`text-xs uppercase ${getToggleTextClass(draftClient.governance.brandSafe)}`}>Brand-safe mode</span>
                     <input
                       type="checkbox"
                       checked={draftClient.governance.brandSafe}
@@ -510,11 +515,11 @@ const ConfigurationModal = ({
                         ...client,
                         governance: { ...client.governance, brandSafe: event.target.checked },
                       }))}
-                      className="h-4 w-4 rounded"
+                      className={toggleInputClassName}
                     />
                   </label>
-                  <label className="rounded-2xl border border-slate-800 bg-slate-800 p-3 flex items-center justify-between gap-3">
-                    <span className="text-xs uppercase text-slate-400">Role-based access</span>
+                  <label className={getToggleCardClass(draftClient.governance.roleBased)}>
+                    <span className={`text-xs uppercase ${getToggleTextClass(draftClient.governance.roleBased)}`}>Role-based access</span>
                     <input
                       type="checkbox"
                       checked={draftClient.governance.roleBased}
@@ -522,7 +527,7 @@ const ConfigurationModal = ({
                         ...client,
                         governance: { ...client.governance, roleBased: event.target.checked },
                       }))}
-                      className="h-4 w-4 rounded"
+                      className={toggleInputClassName}
                     />
                   </label>
                 </div>
