@@ -79,7 +79,7 @@ jobs:
       - name: List packaged files
         run: |
           echo "Release directory contents:"
-          dir release /s
+          Get-ChildItem -Path release -Recurse
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v6
@@ -136,10 +136,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -fa nightly-macos -m "p0stmaster macOS nightly"
-          git tag -fa nightly-windows -m "p0stmaster Windows nightly"
-          git push origin refs/tags/nightly-macos --force
-          git push origin refs/tags/nightly-windows --force
+          git tag -fa nightly-desktop -m "p0stmaster desktop nightly"
+          git push origin refs/tags/nightly-desktop --force
 
       - name: Publish nightly prerelease
         if: github.ref == 'refs/heads/main'
