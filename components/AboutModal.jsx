@@ -78,7 +78,7 @@ const AboutModal = ({ isOpen, theme, themeMode, aboutInfo, onClose }) => {
               <div>
                 <div className="text-sm font-semibold">Still network-dependent for live features</div>
                 <p className="mt-1 text-sm leading-6 text-slate-500">
-                  AI drafting, live feed refresh, and social publishing still call external services.
+                  AI Studio actions, live feed refresh, and social publishing still call external services.
                   Those features need internet access plus your configured provider keys.
                 </p>
               </div>

@@ -11,7 +11,7 @@
 
 # p0stmaster
 
-**p0stmaster** is a desktop and browser-based social-media command center for agencies, freelancers, and in-house marketing teams. Plan campaigns, draft content with AI, preview posts across seven platforms in real time, and publish — all from one window.
+**p0stmaster** is a desktop and browser-based social-media command center for agencies, freelancers, and in-house marketing teams. Plan campaigns, generate and pressure-test content with AI Studio, preview posts across seven platforms in real time, and publish — all from one window.
 
 Built by [Akita Engineering](https://github.com/AkitaEngineering).
 
@@ -22,7 +22,7 @@ Built by [Akita Engineering](https://github.com/AkitaEngineering).
 | Juggling five platform tabs | Unified composer with live preview for Instagram, Facebook, LinkedIn, Pinterest, X, YouTube, and TikTok |
 | Writing 7 different captions | AI rewrites adapt a single draft to each platform's tone and limits |
 | Switching between client logins | Isolated workspaces with separate brands, credentials, and governance |
-| Missing trending topics | Live Feed Pulse ingests RSS, Atom, and YouTube feeds for real-time signals |
+| Missing trending topics | Live Feed Pulse surfaces real-time signals from RSS, Atom, and YouTube feeds, and Trend Spark turns them into draftable ideas |
 | Manual approval chains | Built-in approval workflow with draft → pending → approved states |
 | Paying per seat for SaaS tools | Free, open-source, runs offline — your keys, your data |
 
@@ -31,14 +31,14 @@ Built by [Akita Engineering](https://github.com/AkitaEngineering).
 See [FEATURES.md](FEATURES.md) for the full breakdown. Highlights:
 
 - **Multi-client workspaces** — each client gets its own brands, accounts, API keys, governance rules, and feed sources
-- **AI draft generation** — OpenAI / ChatGPT, Google Gemini, or Anthropic Claude — pick per workspace
+- **AI Studio** — drafts, hooks, polish, hashtags, critique, platform adaptation, audience rewrites, threads, trend-driven copy, and AI calendars from one panel
 - **Platform-native previews** — see exactly how your post will look on Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok before you publish
 - **One-click live publishing** — powered by Ayrshare, publish to all connected platforms simultaneously
-- **Campaign planner** — generate a multi-day content calendar and build campaigns in seconds
+- **Campaign planner** — use the quick planner or generate an AI-built 7-day strategic calendar in seconds
 - **Compliance scanner** — automatic brand-safety and guideline checks before content goes live
 - **Brand kit analysis** — upload a logo and extract colour palettes, fonts, and brand signals automatically
-- **Live Feed Pulse** — pull trending content from RSS, Atom, and YouTube feeds for inspiration
-- **Audience and asset variants** — repurpose a single draft into demographic-tuned or format-tuned variants
+- **Live Feed Pulse** — pull trending content from RSS, Atom, and YouTube feeds for inspiration, then send it straight into AI Trend Spark
+- **Variants and repurposing** — generate A/B variants, audience rewrites, thread/carousel sequences, and local asset presets from one draft
 - **Encrypted local vault** — all state persists locally with AES-256-GCM encryption; no cloud dependency
 - **Themes** — Dark, Light, and FM colour palettes
 - **Desktop app** — Electron packaging for macOS (universal) and Windows (installer + portable)
@@ -90,7 +90,7 @@ Artifacts are written to `release/`.
 
 All configuration happens inside the app through **Settings** (gear icon).
 
-### AI drafting
+### AI Studio
 
 Add at least one API key per workspace:
 
@@ -99,6 +99,12 @@ Add at least one API key per workspace:
 | OpenAI / ChatGPT | OpenAI API key |
 | Google Gemini | Gemini API key |
 | Anthropic Claude | Claude API key |
+
+AI Studio actions currently include:
+
+- **Create** — draft generation, hooks, thread/carousel building, and Trend Spark from live feeds
+- **Optimize** — polish, hashtag generation, platform-by-platform adaptation, and pre-publish critique
+- **Strategy** — A/B variants, audience rewrites, and AI-generated content calendars
 
 ### Live publishing
 

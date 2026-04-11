@@ -130,6 +130,7 @@ const DEFAULT_DRAFT = {
   publishMediaUrl: '',
   pinterestBoard: '',
   selectedAccountId: '',
+  selectedBrandId: '',
   theme: '',
   frequency: '',
   goal: '',
@@ -745,7 +746,7 @@ const formatTimeAgo = (value) => {
   return `${diffDays}d ago`;
 };
 
-const requestAiDraft = async ({ provider, apiKey, action, sessionDraft, selectedBrand }) => {
+const requestAiDraft = async ({ provider, apiKey, action, sessionDraft, selectedBrand, feedContext }) => {
   if (!provider || !apiKey?.trim()) {
     throw new Error('Configure an AI provider and API key before requesting AI copy');
   }
@@ -767,6 +768,7 @@ const requestAiDraft = async ({ provider, apiKey, action, sessionDraft, selected
       voice: selectedBrand.voice,
       hashtags: selectedBrand.hashtags,
       city: selectedBrand.city,
+      feedContext: feedContext || '',
     }),
   });
 
@@ -830,6 +832,11 @@ const App = () => {
   const [assetVariants, setAssetVariants] = useState([]);
   const [isAiGenerating, setIsAiGenerating] = useState(false);
   const [isAiMenuOpen, setIsAiMenuOpen] = useState(false);
+  const [aiAdaptedCaptions, setAiAdaptedCaptions] = useState({});
+  const [aiVariants, setAiVariants] = useState([]);
+  const [aiCritique, setAiCritique] = useState('');
+  const [aiThread, setAiThread] = useState([]);
+  const [aiAudienceVariants, setAiAudienceVariants] = useState([]);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishStatus, setPublishStatus] = useState(null);
   const [isBrandKitProcessing, setIsBrandKitProcessing] = useState(false);
@@ -945,8 +952,14 @@ const App = () => {
   );
 
   const selectedBrand = useMemo(
-    () => activeClient.brands.find((brand) => brand.id === selectedAccount?.brandId) || activeClient.brands[0] || EMPTY_BRAND,
-    [activeClient.brands, selectedAccount],
+    () => {
+      if (sessionDraft.selectedBrandId) {
+        const explicit = activeClient.brands.find((brand) => brand.id === sessionDraft.selectedBrandId);
+        if (explicit) return explicit;
+      }
+      return activeClient.brands.find((brand) => brand.id === selectedAccount?.brandId) || activeClient.brands[0] || EMPTY_BRAND;
+    },
+    [activeClient.brands, selectedAccount, sessionDraft.selectedBrandId],
   );
 
   const complianceWarnings = useMemo(
@@ -961,15 +974,17 @@ const App = () => {
 
   const adaptedCaptions = useMemo(
     () => sessionDraft.selectedPlatforms.reduce((accumulator, platformId) => {
-      accumulator[platformId] = adaptCaption(platformId, sessionDraft.content, sessionDraft.postType, selectedBrand.name);
+      accumulator[platformId] = aiAdaptedCaptions[platformId] || adaptCaption(platformId, sessionDraft.content, sessionDraft.postType, selectedBrand.name);
       return accumulator;
     }, {}),
-    [sessionDraft.content, sessionDraft.selectedPlatforms, sessionDraft.postType, selectedBrand.name],
+    [sessionDraft.content, sessionDraft.selectedPlatforms, sessionDraft.postType, selectedBrand.name, aiAdaptedCaptions],
   );
 
   const audienceVariants = useMemo(
-    () => buildAudienceVariants(sessionDraft.content, selectedBrand.name),
-    [sessionDraft.content, selectedBrand.name],
+    () => aiAudienceVariants.length > 0
+      ? aiAudienceVariants
+      : buildAudienceVariants(sessionDraft.content, selectedBrand.name),
+    [sessionDraft.content, selectedBrand.name, aiAudienceVariants],
   );
 
   const connectedPublishPlatforms = useMemo(
@@ -1020,7 +1035,7 @@ const App = () => {
 
     if (unmappedPublishPlatforms.length > 0) {
       const labels = unmappedPublishPlatforms.map((platformId) => PLATFORMS.find((platform) => platform.id === platformId)?.name || platformId);
-      return `Live provider mapping required for ${labels.join(', ')}`;
+      return `Live provider mapping required in this workspace for ${labels.join(', ')}`;
     }
 
     return '';
@@ -1119,6 +1134,33 @@ const App = () => {
       ...client,
       brands: [...client.brands, buildBlankBrand({ name: client.company || client.name || '' })],
     }));
+  };
+
+  const handleRemoveBrand = (brandId) => {
+    updateConfigDraftClient((client) => {
+      const remainingBrands = client.brands.filter((brand) => brand.id !== brandId);
+      const accounts = client.accounts.map((account) =>
+        account.brandId === brandId
+          ? { ...account, brandId: remainingBrands[0]?.id || '' }
+          : account,
+      );
+      return { ...client, brands: remainingBrands, accounts };
+    });
+  };
+
+  const handleRemoveAccount = (accountId) => {
+    updateConfigDraftClient((client) => {
+      const remainingAccounts = client.accounts.filter((account) => account.id !== accountId);
+      const nextSelectedAccountId =
+        client.selectedAccountId === accountId
+          ? remainingAccounts[0]?.id || ''
+          : client.selectedAccountId;
+      return { ...client, accounts: remainingAccounts, selectedAccountId: nextSelectedAccountId };
+    });
+  };
+
+  const handleSelectBrand = (brandId) => {
+    setSessionDraft((prev) => ({ ...prev, selectedBrandId: brandId }));
   };
 
   const handleAddFeedSource = () => {
@@ -1328,17 +1370,90 @@ const App = () => {
     setIsAiMenuOpen(false);
 
     try {
-      const result = await requestAiDraft({
+      const payload = {
         provider: activeClient.aiProvider,
         apiKey: activeClient.apiKeys[activeClient.aiProvider],
         action,
         sessionDraft,
         selectedBrand,
-      });
+      };
 
-      setSessionDraft((prev) => ({ ...prev, content: result.text || prev.content }));
-      logAction('ai', `${activeClient.aiProvider} generated a ${action} draft`);
-      setSaveBanner(`AI draft updated via ${activeClient.aiProvider}`);
+      if (action === 'trendspark') {
+        payload.feedContext = liveFeedItems.slice(0, 8).map((item) => `• ${item.title}${item.excerpt ? `: ${shortenText(item.excerpt, 100)}` : ''}`).join('\n');
+      }
+
+      const result = await requestAiDraft(payload);
+
+      if (action === 'adapt') {
+        try {
+          const cleaned = result.text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+          const parsed = JSON.parse(cleaned);
+          if (typeof parsed === 'object' && parsed !== null) {
+            setAiAdaptedCaptions(parsed);
+          } else {
+            setSessionDraft((prev) => ({ ...prev, content: result.text || prev.content }));
+          }
+        } catch {
+          setSessionDraft((prev) => ({ ...prev, content: result.text || prev.content }));
+        }
+      } else if (action === 'variants') {
+        const parts = result.text.split(/\n---\n|\n-{3,}\n/).filter((part) => part.trim());
+        setAiVariants(parts.map((text, index) => ({
+          id: createId(),
+          label: `Variant ${String.fromCharCode(65 + index)}`,
+          copy: text.trim(),
+        })));
+      } else if (action === 'critique') {
+        setAiCritique(result.text);
+      } else if (action === 'hooks') {
+        setSessionDraft((prev) => ({ ...prev, content: result.text || prev.content }));
+      } else if (action === 'audience') {
+        const segments = result.text.split(/\n---\n|\n-{3,}\n/).filter((part) => part.trim());
+        const parsed = segments.map((segment) => {
+          const lines = segment.trim().split('\n');
+          const segmentName = lines[0].replace(/^#+\s*/, '').replace(/^\*+/, '').replace(/\*+$/, '').trim();
+          return {
+            id: createId(),
+            segment: segmentName || 'Audience segment',
+            copy: lines.slice(1).join('\n').trim(),
+          };
+        });
+        setAiAudienceVariants(parsed);
+      } else if (action === 'calendar') {
+        const lines = result.text.split('\n').filter((line) => line.trim());
+        const parsed = lines.map((line, index) => {
+          const parts = line.split('|').map((part) => part.trim());
+          if (parts.length >= 3) {
+            return {
+              id: `ai-plan-${index + 1}`,
+              date: parts[0].replace(/^DAY\s*/i, 'Day ').trim() || `Day ${index + 1}`,
+              title: parts[1] || `Post ${index + 1}`,
+              platforms: (parts[2] || '').split(',').map((p) => p.trim()).filter(Boolean),
+              status: index === 0 ? 'Draft' : 'Planned',
+            };
+          }
+          return {
+            id: `ai-plan-${index + 1}`,
+            date: `Day ${index + 1}`,
+            title: line.trim(),
+            platforms: sessionDraft.selectedPlatforms.slice(0, 2).map((id) => PLATFORMS.find((p) => p.id === id)?.name || id),
+            status: index === 0 ? 'Draft' : 'Planned',
+          };
+        }).slice(0, 7);
+        setCalendarPlan(parsed);
+      } else if (action === 'thread') {
+        const parts = result.text.split(/\n---\n|\n-{3,}\n/).filter((part) => part.trim());
+        setAiThread(parts.map((text, index) => ({
+          id: createId(),
+          part: index + 1,
+          content: text.trim(),
+        })));
+      } else {
+        setSessionDraft((prev) => ({ ...prev, content: result.text || prev.content }));
+      }
+
+      logAction('ai', `${activeClient.aiProvider} generated ${action} content`);
+      setSaveBanner(`AI ${action} completed via ${activeClient.aiProvider}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'AI request failed';
       logAction('ai', `AI request failed: ${message}`);
@@ -1346,6 +1461,29 @@ const App = () => {
     } finally {
       setIsAiGenerating(false);
     }
+  };
+
+  const handleUseVariant = (copy) => {
+    setSessionDraft((prev) => ({ ...prev, content: copy }));
+    logAction('ai', 'Applied an AI variant to the draft');
+    setSaveBanner('Variant applied to draft');
+  };
+
+  const handleUseThreadPart = (index) => {
+    if (aiThread[index]) {
+      setSessionDraft((prev) => ({ ...prev, content: aiThread[index].content }));
+      logAction('ai', `Applied thread part ${index + 1} to draft`);
+      setSaveBanner(`Thread part ${index + 1} applied to draft`);
+    }
+  };
+
+  const handleClearAiOverlays = () => {
+    setAiAdaptedCaptions({});
+    setAiVariants([]);
+    setAiCritique('');
+    setAiThread([]);
+    setAiAudienceVariants([]);
+    setSaveBanner('AI overlays cleared — using default previews');
   };
 
   const handleLogoUpload = (event) => {
@@ -1602,6 +1740,10 @@ const App = () => {
             isRepurposing,
             isAiGenerating,
             isAiMenuOpen,
+            aiVariants,
+            aiCritique,
+            aiThread,
+            liveFeedItems,
             isPublishing,
             publishStatus,
             connectedPublishPlatforms,
@@ -1611,6 +1753,7 @@ const App = () => {
           handlers={{
             handleClientSelection,
             handleSelectAccount,
+            handleSelectBrand,
             handleGenerateCalendar,
             handleBuildCampaign,
             handleRequestApproval,
@@ -1623,6 +1766,9 @@ const App = () => {
             handleRepurposeAssets,
             setIsAiMenuOpen,
             handleAiAction,
+            handleUseVariant,
+            handleUseThreadPart,
+            handleClearAiOverlays,
           }}
           constants={{ PLATFORMS }}
         />
@@ -1691,7 +1837,9 @@ const App = () => {
           handleAddFeedSource,
           handleRemoveFeedSource,
           handleAddAccount,
+          handleRemoveAccount,
           handleAddBrand,
+          handleRemoveBrand,
           handleDeleteClientWorkspace,
           saveConfiguration,
           cancelConfiguration,

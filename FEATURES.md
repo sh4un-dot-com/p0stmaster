@@ -26,17 +26,29 @@ Three leading AI providers are natively supported — configure per workspace so
 
 | Provider | Model family | Key type |
 |---|---|---|
-| OpenAI / ChatGPT | GPT-4, GPT-4o, GPT-3.5 | OpenAI API key |
-| Google Gemini | Gemini Pro, Gemini Flash | Gemini API key |
-| Anthropic Claude | Claude 3 Opus, Sonnet, Haiku | Claude API key |
+| OpenAI / ChatGPT | GPT-4o mini | OpenAI API key |
+| Google Gemini | Gemini 2.0 Flash | Gemini API key |
+| Anthropic Claude | Claude 3.5 Sonnet | Claude API key |
 
-### AI capabilities
+### AI Studio capabilities
 
 - **Draft generation** — generate a full post from a theme, goal, and brand context
+- **Hook generation** — produce five scroll-stopping openers using different psychological angles
+- **Brand polish** — tighten positioning and rewrite for a more executive, campaign-ready tone
+- **Hashtag generation** — append concise discovery hashtags without turning the post into spam
 - **Platform-native rewrites** — adapt a single draft into tone-matched, character-count-aware versions for each selected platform
-- **Audience variants** — produce demographic-tuned versions (e.g., Gen Z casual vs. executive professional)
-- **Asset variants** — repurpose content into different format styles (carousel, story, thread)
-- **Campaign builder** — generate a multi-day content calendar from a theme and frequency
+- **Draft critique** — score the hook, CTA, platform fit, and voice alignment, then return specific fixes and a stronger rewrite
+- **A/B variants** — generate multiple testable versions built around different persuasion angles
+- **Audience rewrites** — tailor the same message for cold audiences, warm communities, and decision-makers
+- **Thread / carousel conversion** — turn one post into a multi-part sequence with reusable thread cards
+- **Trend Spark** — use live feed headlines and excerpts as AI context for timely, original posts
+- **AI calendar generation** — build a strategic 7-day content plan directly from AI Studio
+
+### AI Studio workflow
+
+- **Create** — draft, hooks, thread/carousel, Trend Spark
+- **Optimize** — polish, hashtags, adapt, critique
+- **Strategy** — A/B variants, audiences, calendar
 
 ---
 
@@ -89,8 +101,9 @@ See how your content will actually look before it goes live. Previews render usi
 
 Go from theme to full content calendar in seconds.
 
-- **Generate plan** — provide a theme, frequency, and goal → get a multi-day calendar with titles, dates, and platform targets
-- **Build campaign** — expand a plan into ready-to-edit drafts
+- **Quick planner** — provide a theme, frequency, and goal → get a multi-day calendar with titles, dates, and platform targets
+- **AI calendar** — generate a 7-day strategic plan with launch, educate, behind-the-scenes, proof, engagement, trend, and CTA slots
+- **Build campaign** — expand the active plan into ready-to-edit drafts
 - **One-click campaign view** — see the first 3 items inline with full detail expansion
 
 ---
@@ -154,6 +167,7 @@ Ingest real-time content from the web to surface trends and inspire content.
 - **Enable/disable per source** — toggle feeds without deleting them
 - **Live refresh** — pull the latest items on demand
 - **Trend extraction** — surface trending topics and keywords from aggregated feed data
+- **Trend Spark integration** — push live headlines and excerpts into AI Studio to generate timely posts
 - **Last-updated timestamp** — see exactly when feeds were last refreshed
 
 ---
@@ -168,7 +182,8 @@ The left-panel composer is the primary workspace for creating content.
 - **Media upload** — attach images and videos with drag-and-drop or file picker
 - **Public media URL field** — for platforms that require a hosted URL (Instagram, Pinterest, YouTube, TikTok)
 - **Pinterest board field** — specify the target board for Pinterest pins
-- **AI menu** — quick-access dropdown for AI rewrite, adapt, audience variants, and asset variants
+- **AI Studio** — create, optimize, and strategize without leaving the composer
+- **Clickable AI results** — apply A/B variants or individual thread parts straight back into the active draft
 
 ---
 

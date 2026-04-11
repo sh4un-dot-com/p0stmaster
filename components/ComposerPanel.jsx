@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bot, Trash2 } from 'lucide-react';
+import { Bot, Trash2, Zap, BarChart3, MessageSquare, Users, CalendarDays, Rss, Split, Sparkles, X } from 'lucide-react';
 
 const ComposerPanel = ({ theme, state, handlers, constants }) => {
   const {
@@ -14,6 +14,10 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
     isRepurposing,
     isAiGenerating,
     isAiMenuOpen,
+    aiVariants,
+    aiCritique,
+    aiThread,
+    liveFeedItems,
     isPublishing,
     publishStatus,
     connectedPublishPlatforms,
@@ -24,6 +28,7 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
   const {
     handleClientSelection,
     handleSelectAccount,
+    handleSelectBrand,
     handleGenerateCalendar,
     handleBuildCampaign,
     handleRequestApproval,
@@ -36,6 +41,9 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
     handleRepurposeAssets,
     setIsAiMenuOpen,
     handleAiAction,
+    handleUseVariant,
+    handleUseThreadPart,
+    handleClearAiOverlays,
   } = handlers;
 
   const { PLATFORMS } = constants;
@@ -53,6 +61,20 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
     .join(', ');
   const isPublishDisabled = isPublishing || Boolean(publishDisabledReason);
   const hasConnectedProviders = connectedPublishPlatforms.length > 0;
+  const hasBrands = activeClient.brands.length > 0;
+  const isLightTheme = theme.card === 'bg-white';
+  const warningPanelClass = isLightTheme
+    ? 'rounded-2xl border border-amber-300 bg-amber-50 p-4 text-[11px] text-amber-950'
+    : 'rounded-2xl border border-amber-600 bg-amber-500/10 p-4 text-[11px] text-amber-200';
+  const publishFeedbackClass = isLightTheme
+    ? 'rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700'
+    : 'rounded-2xl border border-slate-800 bg-slate-900 p-3 text-xs text-slate-300';
+  const disabledPublishButtonClass = isLightTheme
+    ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+    : 'bg-slate-800 text-slate-500 cursor-not-allowed';
+  const neutralEmptyStateClass = isLightTheme
+    ? 'rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-600'
+    : 'rounded-2xl border border-slate-800 bg-slate-900 p-4 text-slate-500';
 
   return (
     <section className="lg:col-span-5 border-r border-slate-800 min-h-[calc(100vh-64px)] p-8">
@@ -97,8 +119,25 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
               )}
             </select>
             {!hasAccounts && (
-              <div className="rounded-2xl border border-amber-600 bg-amber-500/10 p-4 text-[11px] text-amber-200">
-                Add at least one managed account in Platform Configuration before you attempt live publishing.
+              <div className={warningPanelClass}>
+                <div>Add at least one managed account for this workspace in Platform Configuration before you attempt live publishing.</div>
+                <div className="mt-2 opacity-80">Managed accounts stay scoped to the active workspace and can be mapped to the right brand before publish.</div>
+              </div>
+            )}
+            {hasBrands && (
+              <div>
+                <label className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Active Brand</label>
+                <select
+                  value={selectedBrand.id || ''}
+                  onChange={(event) => handleSelectBrand(event.target.value)}
+                  className={`mt-2 w-full p-3 rounded-2xl ${theme.card} border border-slate-800 text-sm outline-none`}
+                >
+                  {activeClient.brands.map((brand) => (
+                    <option key={brand.id} value={brand.id}>
+                      {brand.name || 'Untitled brand'}{brand.voice ? ` • ${brand.voice}` : ''}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
             <div className="grid grid-cols-3 gap-3 text-slate-400 text-[11px]">
@@ -119,9 +158,12 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
 
           <div className={`rounded-3xl border border-slate-800 ${theme.card} p-5 space-y-4`}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-xs uppercase tracking-[0.3em] text-slate-500">Campaign Planning</span>
+              <div>
+                <div className="text-xs uppercase tracking-[0.3em] text-slate-500">Campaign Planning</div>
+                <div className="text-[11px] text-slate-400">Use Quick Plan here, or run AI Studio &gt; Calendar for a strategy-led 7-day lineup.</div>
+              </div>
               <div className="flex gap-3 flex-wrap">
-                <button onClick={handleGenerateCalendar} className="text-xs text-indigo-400 hover:text-white">Generate plan</button>
+                <button onClick={handleGenerateCalendar} className="text-xs text-indigo-400 hover:text-white">Quick plan</button>
                 <button onClick={handleBuildCampaign} className="text-xs text-slate-300 hover:text-white">Build campaign</button>
               </div>
             </div>
@@ -169,7 +211,7 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
           {campaignPlan.length > 0 && (
             <div className={`rounded-3xl border border-slate-800 ${theme.card} p-5 space-y-3`}>
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-[0.3em] text-slate-500">One-Click Campaign</span>
+                <span className="text-xs uppercase tracking-[0.3em] text-slate-500">Campaign Expansion</span>
                 <span className="text-xs text-slate-400">{campaignPlan.length} days</span>
               </div>
               <div className="grid grid-cols-1 gap-3">
@@ -309,12 +351,12 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
               <button
                 onClick={handleSubmit}
                 disabled={isPublishDisabled}
-                className={`rounded-2xl px-5 py-4 text-sm font-semibold transition ${isPublishDisabled ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-indigo-500 text-white hover:bg-indigo-400'}`}
+                className={`rounded-2xl px-5 py-4 text-sm font-semibold transition ${isPublishDisabled ? disabledPublishButtonClass : 'bg-indigo-500 text-white hover:bg-indigo-400'}`}
               >
                 {isPublishing ? 'Publishing...' : 'Publish to selected accounts'}
               </button>
               {(publishStatus || publishDisabledReason) && (
-                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-3 text-xs text-slate-300">
+                <div className={publishFeedbackClass}>
                   {publishStatus || publishDisabledReason}
                 </div>
               )}
@@ -325,7 +367,7 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
         <div className={`rounded-3xl border border-slate-800 ${theme.card} p-5 space-y-4`}>
           <div className="flex items-center justify-between gap-3">
             <span className="text-xs uppercase tracking-[0.3em] text-slate-500">Auto-Adapted Copy</span>
-            <span className="text-xs text-slate-400">Platform-native variants</span>
+            <span className="text-xs text-slate-400">AI rewrites per platform</span>
           </div>
           <div className="grid grid-cols-1 gap-3">
             {sessionDraft.selectedPlatforms.length > 0 ? sessionDraft.selectedPlatforms.map((platformId) => {
@@ -345,7 +387,7 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
                 </div>
               );
             }) : (
-              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4 text-slate-500">Choose one or more platforms to generate native copy adaptations.</div>
+              <div className={neutralEmptyStateClass}>Choose one or more platforms to preview platform-specific rewrites.</div>
             )}
           </div>
         </div>
@@ -353,8 +395,8 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
         {audienceVariants.length > 0 && (
           <div className={`rounded-3xl border border-slate-800 ${theme.card} p-5 space-y-4`}>
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs uppercase tracking-[0.3em] text-slate-500">Audience Variants</span>
-              <span className="text-xs text-slate-400">Personalized segments</span>
+              <span className="text-xs uppercase tracking-[0.3em] text-slate-500">Audience Rewrites</span>
+              <span className="text-xs text-slate-400">Cold, warm, and buyer-ready angles</span>
             </div>
             <div className="grid grid-cols-1 gap-3">
               {audienceVariants.map((variant) => (
@@ -377,43 +419,153 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
           </button>
           <button
             onClick={() => setIsAiMenuOpen((prev) => !prev)}
-            className="flex-1 py-4 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors"
+            className={`flex-1 py-4 rounded-xl transition-colors ${isAiMenuOpen ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-200 hover:bg-slate-700'}`}
           >
-            <Bot size={18} className="inline-block mr-2" /> AI Ideas
+            <Sparkles size={18} className="inline-block mr-2" /> AI Studio
           </button>
         </div>
 
         {isAiMenuOpen && (
-          <div className={`rounded-3xl border border-slate-800 ${theme.card} p-5 space-y-4`}>
+          <div className={`rounded-3xl border border-indigo-500/30 ${theme.card} p-5 space-y-5`}>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold">AI Workflow</span>
-              <span className="text-xs text-slate-500">Real provider request only</span>
+              <span className="text-sm font-bold text-indigo-300">AI Studio</span>
+              <span className="text-xs text-slate-500">{isAiGenerating ? 'Generating...' : `Provider: ${activeClient.aiProvider}`}</span>
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <button
-                onClick={() => handleAiAction('generate')}
-                disabled={isAiGenerating}
-                className="rounded-2xl border border-slate-700 bg-slate-900 p-4 text-left text-sm text-slate-200 hover:bg-slate-800 disabled:opacity-60"
-              >
-                <div className="font-semibold">Rewrite for impact</div>
-                <div className="text-[11px] text-slate-500">Generate a fresh primary draft.</div>
-              </button>
-              <button
-                onClick={() => handleAiAction('professional')}
-                disabled={isAiGenerating}
-                className="rounded-2xl border border-slate-700 bg-slate-900 p-4 text-left text-sm text-slate-200 hover:bg-slate-800 disabled:opacity-60"
-              >
-                <div className="font-semibold">Brand polish</div>
-                <div className="text-[11px] text-slate-500">Tighten tone and positioning.</div>
-              </button>
-              <button
-                onClick={() => handleAiAction('hashtags')}
-                disabled={isAiGenerating}
-                className="rounded-2xl border border-slate-700 bg-slate-900 p-4 text-left text-sm text-slate-200 hover:bg-slate-800 disabled:opacity-60"
-              >
-                <div className="font-semibold">Add hashtags</div>
-                <div className="text-[11px] text-slate-500">Append discovery tags from the provider output.</div>
-              </button>
+
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Create</div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <button onClick={() => handleAiAction('generate')} disabled={isAiGenerating} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <Zap size={14} className="text-indigo-400 mb-1" />
+                  <div className="font-semibold text-xs">Draft</div>
+                  <div className="text-[10px] text-slate-500">Fresh primary copy</div>
+                </button>
+                <button onClick={() => handleAiAction('hooks')} disabled={isAiGenerating} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <MessageSquare size={14} className="text-amber-400 mb-1" />
+                  <div className="font-semibold text-xs">Hooks</div>
+                  <div className="text-[10px] text-slate-500">5 scroll-stoppers</div>
+                </button>
+                <button onClick={() => handleAiAction('thread')} disabled={isAiGenerating || !sessionDraft.content} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <Split size={14} className="text-fuchsia-400 mb-1" />
+                  <div className="font-semibold text-xs">Thread</div>
+                  <div className="text-[10px] text-slate-500">Carousel / thread</div>
+                </button>
+                <button onClick={() => handleAiAction('trendspark')} disabled={isAiGenerating} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <Rss size={14} className="text-emerald-400 mb-1" />
+                  <div className="font-semibold text-xs">Trend Spark</div>
+                  <div className="text-[10px] text-slate-500">{liveFeedItems.length > 0 ? `${liveFeedItems.length} feed items` : 'From feeds'}</div>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Optimize</div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <button onClick={() => handleAiAction('professional')} disabled={isAiGenerating || !sessionDraft.content} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <Bot size={14} className="text-sky-400 mb-1" />
+                  <div className="font-semibold text-xs">Polish</div>
+                  <div className="text-[10px] text-slate-500">Executive-level copy</div>
+                </button>
+                <button onClick={() => handleAiAction('hashtags')} disabled={isAiGenerating || !sessionDraft.content} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <span className="text-pink-400 text-sm font-bold">#</span>
+                  <div className="font-semibold text-xs">Hashtags</div>
+                  <div className="text-[10px] text-slate-500">Discovery tags</div>
+                </button>
+                <button onClick={() => handleAiAction('adapt')} disabled={isAiGenerating || !sessionDraft.content || sessionDraft.selectedPlatforms.length === 0} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <Sparkles size={14} className="text-violet-400 mb-1" />
+                  <div className="font-semibold text-xs">Adapt</div>
+                  <div className="text-[10px] text-slate-500">Per-platform rewrite</div>
+                </button>
+                <button onClick={() => handleAiAction('critique')} disabled={isAiGenerating || !sessionDraft.content} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <BarChart3 size={14} className="text-rose-400 mb-1" />
+                  <div className="font-semibold text-xs">Critique</div>
+                  <div className="text-[10px] text-slate-500">Score + fix</div>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Strategy</div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <button onClick={() => handleAiAction('variants')} disabled={isAiGenerating || !sessionDraft.content} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <Split size={14} className="text-orange-400 mb-1" />
+                  <div className="font-semibold text-xs">A/B Variants</div>
+                  <div className="text-[10px] text-slate-500">3 test versions</div>
+                </button>
+                <button onClick={() => handleAiAction('audience')} disabled={isAiGenerating || !sessionDraft.content} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <Users size={14} className="text-cyan-400 mb-1" />
+                  <div className="font-semibold text-xs">Audiences</div>
+                  <div className="text-[10px] text-slate-500">Segment rewrites</div>
+                </button>
+                <button onClick={() => handleAiAction('calendar')} disabled={isAiGenerating} className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-left text-sm hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                  <CalendarDays size={14} className="text-teal-400 mb-1" />
+                  <div className="font-semibold text-xs">Calendar</div>
+                  <div className="text-[10px] text-slate-500">7-day content plan</div>
+                </button>
+              </div>
+            </div>
+
+            {(aiVariants.length > 0 || aiCritique || aiThread.length > 0) && (
+              <div className="flex justify-end">
+                <button onClick={handleClearAiOverlays} className="text-[10px] text-slate-500 hover:text-rose-400 transition-colors flex items-center gap-1">
+                  <X size={10} /> Clear AI results
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {aiCritique && (
+          <div className={`rounded-3xl border border-rose-500/20 ${theme.card} p-5 space-y-3`}>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold text-rose-300">AI Critique</span>
+              <button onClick={() => handleClearAiOverlays()} className="text-[10px] text-slate-500 hover:text-rose-400">Dismiss</button>
+            </div>
+            <pre className="text-xs text-slate-300 whitespace-pre-wrap font-sans leading-relaxed">{aiCritique}</pre>
+          </div>
+        )}
+
+        {aiVariants.length > 0 && (
+          <div className={`rounded-3xl border border-orange-500/20 ${theme.card} p-5 space-y-3`}>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold text-orange-300">A/B Variants</span>
+              <span className="text-[10px] text-slate-500">Click to apply to draft</span>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              {aiVariants.map((variant) => (
+                <button
+                  key={variant.id}
+                  onClick={() => handleUseVariant(variant.copy)}
+                  className="rounded-2xl border border-slate-700 bg-slate-900 p-4 text-left hover:bg-slate-800 hover:border-orange-500/30 transition-colors"
+                >
+                  <div className="text-[10px] font-bold text-orange-400 mb-1">{variant.label}</div>
+                  <div className="text-xs text-slate-300 whitespace-pre-wrap">{variant.copy}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {aiThread.length > 0 && (
+          <div className={`rounded-3xl border border-fuchsia-500/20 ${theme.card} p-5 space-y-3`}>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold text-fuchsia-300">Thread / Carousel</span>
+              <span className="text-[10px] text-slate-500">{aiThread.length} parts</span>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              {aiThread.map((part, index) => (
+                <button
+                  key={part.id}
+                  onClick={() => handleUseThreadPart(index)}
+                  className="rounded-2xl border border-slate-700 bg-slate-900 p-3 text-left hover:bg-slate-800 hover:border-fuchsia-500/30 transition-colors"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-fuchsia-400 bg-fuchsia-500/10 px-2 py-0.5 rounded-full">{part.part}/{aiThread.length}</span>
+                    <span className="text-[10px] text-slate-500">{part.content.length} chars</span>
+                  </div>
+                  <div className="text-xs text-slate-300 whitespace-pre-wrap">{part.content}</div>
+                </button>
+              ))}
             </div>
           </div>
         )}

@@ -273,18 +273,148 @@ const requestLiveFeeds = async ({ sources = [] }) => {
   return { items, failedSources };
 };
 
-const buildAiPrompt = ({ action, content, brandName, goal, theme, notes, postType, platforms, voice, hashtags, city }) => {
+const buildAiPrompt = ({ action, content, brandName, goal, theme, notes, postType, platforms, voice, hashtags, city, feedContext }) => {
   const platformNames = Array.isArray(platforms) && platforms.length > 0 ? platforms.join(', ') : 'Instagram';
-  const intent = action === 'professional'
-    ? 'Rewrite this as polished, executive-level marketing copy that still feels human and direct.'
-    : action === 'hashtags'
-      ? 'Append a concise, platform-ready hashtag block to strengthen discoverability without sounding spammy.'
-      : 'Create a best-in-class source draft for a social campaign that can be adapted to multiple channels.';
 
-  return [
+  const INTENTS = {
+    professional: 'Rewrite this as polished, executive-level marketing copy that still feels human and direct.',
+    hashtags: 'Append a concise, platform-ready hashtag block to strengthen discoverability without sounding spammy.',
+    generate: 'Create a best-in-class source draft for a social campaign that can be adapted to multiple channels.',
+    adapt: [
+      'Rewrite this draft as platform-optimized posts.',
+      'For EACH of the following platforms, write the ideal version respecting its culture, character limits, audience expectations, and best practices.',
+      `Platforms to adapt for: ${platformNames}`,
+      'Return ONLY a valid JSON object with lowercase platform IDs as keys and the optimized copy as string values.',
+      'Example format: {"instagram": "optimized IG copy...", "linkedin": "optimized LinkedIn copy..."}',
+      'Platform guidelines:',
+      '- Instagram: visual-first, emoji-friendly, 30 hashtags max, strong CTA, 2200 char limit',
+      '- Facebook: conversational, longer-form OK, encourage comments/shares, 63206 char limit',
+      '- LinkedIn: professional tone, thought-leadership angle, industry insights, 3000 char limit',
+      '- Twitter/X: punchy and concise, strong hook, 1-2 hashtags max, 280 char limit',
+      '- YouTube: SEO-rich description, timestamps-friendly, subscribe CTA, keyword-heavy',
+      '- Pinterest: aspirational, keyword-rich, actionable ("Try this", "Save for later"), 500 char limit',
+      '- TikTok: Gen-Z friendly, trend-aware, casual tone, emoji-heavy, 2200 char limit',
+      'Do NOT wrap the JSON in markdown code fences. Return raw JSON only.',
+    ].join('\n'),
+    variants: [
+      'Create 3 distinctly different versions of this social media post for A/B testing.',
+      'Each variant MUST use a different psychological angle:',
+      'Variant A: Lead with curiosity — create an information gap that demands a click.',
+      'Variant B: Lead with social proof or authority — use credibility to build trust.',
+      'Variant C: Lead with emotion — tap into aspiration, urgency, or a relatable pain point.',
+      'Maintain the same core message and brand voice across all three.',
+      'Separate each variant with a line containing only three dashes: ---',
+      'Do NOT label them or add headers. Just the copy, separated by ---.',
+    ].join('\n'),
+    critique: [
+      'You are a senior social media strategist performing a pre-publish content review.',
+      'Analyze this draft and provide a structured critique:',
+      '',
+      'SCORE: [X/10]',
+      'HOOK: [Strong/Medium/Weak] — [one-sentence assessment of scroll-stopping power]',
+      'CTA: [Clear/Vague/Missing] — [one-sentence assessment]',
+      'PLATFORM FIT: [one-sentence assessment for target platforms]',
+      'VOICE: [one-sentence brand voice alignment check]',
+      '',
+      'TOP 3 FIXES:',
+      '1. [specific, actionable improvement]',
+      '2. [specific, actionable improvement]',
+      '3. [specific, actionable improvement]',
+      '',
+      'REWRITE: [provide one improved version incorporating all three fixes]',
+      '',
+      'Be direct and constructive. No filler. Every sentence must be actionable.',
+    ].join('\n'),
+    hooks: [
+      'Generate 5 scroll-stopping opening lines (hooks) for this social media post.',
+      'Each hook MUST use a different psychological trigger:',
+      '1. CURIOSITY GAP — create an irresistible information gap',
+      '2. HOT TAKE — a bold, slightly controversial claim that demands attention',
+      '3. QUESTION — a question so specific the reader MUST answer it mentally',
+      '4. PAIN POINT — name a frustration the audience feels daily',
+      '5. DATA HOOK — a surprising statistic, number, or timeframe',
+      '',
+      'Rules:',
+      '- Each hook must be ONE sentence, max 15 words',
+      '- Each hook must be immediately usable as a post opener',
+      '- Number them 1-5',
+      '- After the 5 hooks, add --- on its own line, then write a full post using the strongest hook',
+    ].join('\n'),
+    audience: [
+      'Rewrite this post for 3 distinct audience segments while keeping the core message intact.',
+      '',
+      'Segment 1: COLD AUDIENCE — people who have never heard of this brand.',
+      'Focus on: establishing credibility, explaining value from scratch, removing friction.',
+      '',
+      'Segment 2: WARM COMMUNITY — engaged followers who interact regularly.',
+      'Focus on: deepening connection, insider language, community belonging, shared values.',
+      '',
+      'Segment 3: DECISION-MAKERS — buyers, executives, or clients evaluating a purchase.',
+      'Focus on: ROI, results, proof points, professional tone, clear next steps.',
+      '',
+      'Format: Start each segment with its name on the first line, then the tailored copy below.',
+      'Separate each segment with a line containing only three dashes: ---',
+    ].join('\n'),
+    calendar: [
+      'Create a 7-day social media content calendar for this brand.',
+      'Each day should serve a DIFFERENT strategic purpose:',
+      'Day 1: LAUNCH — introduce or announce something',
+      'Day 2: EDUCATE — teach the audience something valuable',
+      'Day 3: BEHIND THE SCENES — humanize the brand',
+      'Day 4: SOCIAL PROOF — share results, testimonials, or milestones',
+      'Day 5: ENGAGE — ask questions, run polls, start conversations',
+      'Day 6: TREND — tie into a current trend or cultural moment',
+      'Day 7: CTA — direct push toward a specific action',
+      '',
+      `Available platforms: ${platformNames}`,
+      '',
+      'Format each day EXACTLY as:',
+      'DAY [N] | [Post title] | [Platform1, Platform2] | [One-sentence content brief]',
+      '',
+      'Make it specific to the brand, theme, and goals provided. No generic filler.',
+    ].join('\n'),
+    trendspark: [
+      'You are analyzing live industry feed data to create trend-driven social content.',
+      'Based on the following feed items and trending topics, create a ready-to-publish social media post that:',
+      '1. Capitalizes on a specific trend or topic from the feed data',
+      '2. Ties it naturally back to the brand\'s message and positioning',
+      '3. Feels timely, relevant, and adds the brand\'s unique perspective',
+      '4. Is NOT a repost — it\'s original content inspired by the trend',
+      '',
+      'LIVE FEED DATA:',
+      feedContext || '[No feed data available — create a trend-aware post based on current industry themes]',
+      '',
+      'Create one strong draft. After the draft, add --- on its own line, then list 3 more trend-based post ideas as one-line concepts.',
+    ].join('\n'),
+    thread: [
+      'Convert this content into a compelling multi-part thread (Twitter/X thread or Instagram carousel series).',
+      'Rules:',
+      '- Create 5-8 parts',
+      '- Part 1 MUST be a powerful hook that makes people click "Show this thread"',
+      '- Each middle part should make exactly ONE key point',
+      '- Build momentum — each part should make the next irresistible to read',
+      '- Final part must have a clear CTA and a reason to share the thread',
+      '- Keep each part under 280 characters (thread-ready)',
+      '- Use a writing style natural for threads: short sentences, line breaks, punchy rhythm',
+      '',
+      'Separate each part with a line containing only three dashes: ---',
+      'Do NOT number them or add "Thread 1/8" labels. Just the copy.',
+    ].join('\n'),
+  };
+
+  const intent = INTENTS[action] || INTENTS.generate;
+  const isStructured = action === 'adapt';
+
+  const baseLines = [
     'You are an elite social media strategist and copywriter.',
     intent,
-    'Return plain text only. Do not use markdown fences, labels, or bullet lists unless they are natural in the final copy.',
+  ];
+
+  if (!isStructured) {
+    baseLines.push('Return plain text only. Do not use markdown fences, labels, or bullet lists unless they are natural in the final copy.');
+  }
+
+  baseLines.push(
     `Brand: ${brandName}`,
     `Voice: ${voice || 'Confident, clear, strategic'}`,
     `Market: ${city || 'Primary market'}`,
@@ -295,7 +425,9 @@ const buildAiPrompt = ({ action, content, brandName, goal, theme, notes, postTyp
     `Preferred hashtags: ${Array.isArray(hashtags) ? hashtags.join(' ') : ''}`,
     `Extra notes: ${notes || 'None'}`,
     `Current draft: ${content || 'No draft exists yet. Create a strong first draft.'}`,
-  ].join('\n');
+  );
+
+  return baseLines.join('\n');
 };
 
 const extractText = (value) => {

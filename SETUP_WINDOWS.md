@@ -104,7 +104,7 @@ After the app opens:
 
 1. Open Settings
 2. Create or select a client workspace
-3. Add one AI provider key if you want AI drafting
+3. Add one AI provider key if you want to use AI Studio
 4. Add an Ayrshare API key if you want live publishing
 5. Add managed accounts for each platform you want to publish to
 6. Add optional feed sources for Live Feed Pulse
@@ -135,7 +135,7 @@ Check:
 - media URL is present for media-required platforms
 - the draft is approved if approval is enabled
 
-### AI drafting fails
+### AI Studio fails
 
 Check:
 

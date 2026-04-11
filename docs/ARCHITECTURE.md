@@ -72,7 +72,7 @@ Supported providers:
 - Gemini
 - Claude
 
-The selected client workspace stores provider keys. AI drafting only works when the active provider and key are configured.
+The selected client workspace stores provider keys. AI Studio only works when the active provider and key are configured.
 
 ### Social publishing
 

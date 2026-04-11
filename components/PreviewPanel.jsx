@@ -277,7 +277,7 @@ const PreviewPanel = ({ theme, state, handlers, constants, refs, formatters }) =
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-base font-semibold">Content Calendar</h3>
-                <p className="text-[11px] text-slate-500">Generated from your current theme, goal, and platform selection.</p>
+                <p className="text-[11px] text-slate-500">Generated from your theme, goal, and platforms with either Quick Plan or AI Studio Calendar.</p>
               </div>
               <span className="text-xs uppercase text-slate-500">{calendarPlan.length} items</span>
             </div>
@@ -292,7 +292,7 @@ const PreviewPanel = ({ theme, state, handlers, constants, refs, formatters }) =
                   <div className="text-[11px] text-slate-500 mt-2">{item.platforms.join(', ')}</div>
                 </div>
               )) : (
-                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4 text-slate-500">Generate a calendar to see the next content batch.</div>
+                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4 text-slate-500">Use Quick Plan or AI Studio &gt; Calendar to map the next content batch.</div>
               )}
             </div>
           </div>

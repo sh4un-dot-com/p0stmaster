@@ -68,7 +68,7 @@ This is where you create and manage content:
 - **Client Mode** — workspace selector and account picker
 - **Campaign Planning** — generate calendars and build campaigns
 - **Content editor** — write your post, add media, configure platforms
-- **AI menu** — access AI rewrite, adaptation, and variant tools
+- **AI Studio** — generate, optimize, critique, and plan content without leaving the composer
 - **Publish controls** — connected delivery status and publish button
 
 ### Right panel — Preview
@@ -115,7 +115,7 @@ This is where you see and validate content:
 
 ## Configuring AI Providers
 
-Each workspace can use a different AI provider.
+Each workspace can use a different AI provider. AI Studio always uses the provider configured for the currently selected workspace.
 
 1. Open **Settings**
 2. Go to the **AI Provider** section
@@ -254,23 +254,40 @@ For platforms that require hosted media (Instagram, Pinterest, YouTube, TikTok):
 
 ## Using AI Features
 
-Click the **AI menu** button (sparkles icon) in the composer to access AI features.
+Click the **AI Studio** button (sparkles icon) in the composer to access AI features.
 
 ### Available AI actions
 
 | Action | What it does |
 |---|---|
-| **Generate draft** | Creates a full post from your theme, goal, and brand context |
-| **Rewrite** | Rewrites your current content with a fresh angle |
-| **Adapt to platforms** | Generates platform-specific versions of your content |
-| **Audience variants** | Creates versions tuned for different demographics |
-| **Asset variants** | Repurposes into different format styles |
+| **Draft** | Creates a fresh post from your theme, goal, notes, platforms, and brand context |
+| **Hooks** | Generates five opening lines with different persuasion styles, then writes a stronger post |
+| **Thread / Carousel** | Converts one message into a multi-part thread or carousel sequence |
+| **Trend Spark** | Uses your live feed items as context for timely, trend-led copy |
+| **Polish** | Rewrites the current draft in a tighter, more executive tone |
+| **Hashtags** | Appends concise, platform-ready discovery hashtags |
+| **Adapt** | Generates platform-specific preview copy for each selected platform |
+| **Critique** | Scores the draft and returns specific improvements plus a stronger rewrite |
+| **A/B Variants** | Produces multiple testable versions of the same message |
+| **Audiences** | Rewrites the post for cold audiences, warm communities, and decision-makers |
+| **Calendar** | Generates a 7-day strategic content calendar |
+
+### What happens after each AI action
+
+- **Draft, Hooks, Trend Spark, Polish, and Hashtags** update the main draft text
+- **Adapt** updates the platform preview copy without overwriting every preview with the same caption
+- **Critique** opens a review block with a score, fixes, and a rewrite recommendation
+- **A/B Variants** and **Thread / Carousel** create selectable cards you can click to apply back into the draft
+- **Audiences** updates the audience-variant area with AI-generated segment rewrites
+- **Calendar** replaces the current content calendar with an AI-generated 7-day plan
 
 ### Tips for better AI output
 
 - Fill in the **theme**, **goal**, and **brand voice** before generating — the AI uses these as context
 - The more specific your notes, the more targeted the output
-- Use **rewrite** to iterate on a draft rather than starting from scratch
+- Select your target **platforms** before running **Adapt** so the AI knows exactly what to optimize for
+- Refresh **Live Feed Pulse** before using **Trend Spark** if you want the AI to react to the latest headlines
+- Use **Critique** before requesting approval to catch weak hooks, vague CTAs, or platform-fit issues early
 - Review and edit AI output — it's a starting point, not a final draft
 
 ---
@@ -344,6 +361,14 @@ Before the publish button activates, verify:
 4. Click **Generate plan**
 5. A multi-day calendar appears with titles, dates, and platform targets
 
+### Generating an AI calendar
+
+1. Open **AI Studio** in the composer
+2. Click **Calendar** in the **Strategy** section
+3. Wait for the AI to generate a 7-day plan
+4. Review the day-by-day titles and platform targets in the planner area
+5. Edit the draft theme, goal, or platforms and rerun if you want a different strategy mix
+
 ### Building a campaign
 
 1. After generating a plan, click **Build campaign**
@@ -401,7 +426,7 @@ Monitor trends and get content inspiration from live feeds.
 2. In the preview panel, find the **Live Feed Pulse** section
 3. Click **Refresh** to pull the latest items
 4. Browse headlines and summaries from your configured sources
-5. Use trending topics for content inspiration
+5. Use **Trend Spark** in AI Studio to turn those items into ready-to-edit content
 
 ### Trend extraction
 
@@ -436,7 +461,7 @@ Your theme selection persists across sessions.
 ## Keyboard Shortcuts and Tips
 
 - **Ctrl/Cmd + S** — save current state (if implemented)
-- Use the **AI menu** for quick content iterations without leaving the composer
+- Use **AI Studio** for quick content iterations without leaving the composer
 - **Drag and drop** media directly into the upload zone
 - Toggle platforms on/off to quickly see how content adapts
 - Use **mobile preview** to catch layout issues before publishing
@@ -450,7 +475,7 @@ Your theme selection persists across sessions.
 - **macOS:** Right-click → Open, or use System Settings → Privacy & Security → Open Anyway. See [SETUP_MAC.md](SETUP_MAC.md).
 - **Windows:** Click More info → Run anyway on the SmartScreen prompt. See [SETUP_WINDOWS.md](SETUP_WINDOWS.md).
 
-### AI drafting is not working
+### AI Studio is not working
 
 1. Open Settings and verify the correct AI provider is selected
 2. Confirm the API key is entered for that provider

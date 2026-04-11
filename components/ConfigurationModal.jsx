@@ -23,7 +23,9 @@ const ConfigurationModal = ({
     handleAddFeedSource,
     handleRemoveFeedSource,
     handleAddAccount,
+    handleRemoveAccount,
     handleAddBrand,
+    handleRemoveBrand,
     handleDeleteClientWorkspace,
     saveConfiguration,
     cancelConfiguration,
@@ -52,7 +54,7 @@ const ConfigurationModal = ({
           <button
             onClick={() => setConfigTab('ai')}
             className={`flex-1 pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${configTab === 'ai' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
-          >AI Assistants</button>
+          >AI Studio</button>
           <button
             onClick={() => setConfigTab('social')}
             className={`flex-1 pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${configTab === 'social' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
@@ -182,8 +184,12 @@ const ConfigurationModal = ({
 
           {configTab === 'ai' && (
             <>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4 space-y-1">
+                <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">AI Studio Routing</div>
+                <div className="text-[11px] text-slate-500">Choose the provider used for Draft, Hooks, Trend Spark, Critique, Adapt, Audiences, and Calendar actions in the composer.</div>
+              </div>
               <div>
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Select Provider</label>
+                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">AI Studio Provider</label>
                 <div className="grid grid-cols-3 gap-2">
                   {['gemini', 'chatgpt', 'claude'].map((provider) => (
                     <button
@@ -318,7 +324,17 @@ const ConfigurationModal = ({
                   <div className="text-[11px] text-slate-500 mt-1">Add accounts for each platform you want to publish to. Live delivery is enabled only when both provider credentials and a matching account mapping exist.</div>
                 </div>
                 {draftClient.accounts.length > 0 ? draftClient.accounts.map((account) => (
-                  <div key={account.id} className="grid grid-cols-1 gap-3 rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                  <div key={account.id} className="rounded-2xl border border-slate-800 bg-slate-900 p-4 space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs font-semibold text-slate-300">{account.label || 'Untitled account'}{account.handle ? ` • ${account.handle}` : ''}</span>
+                      <button
+                        onClick={() => handleRemoveAccount(account.id)}
+                        className="rounded-full border border-rose-500/50 bg-rose-500/10 p-1.5 text-rose-300 hover:bg-rose-500/20 transition-colors"
+                        aria-label={`Remove ${account.label || 'account'}`}
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-[11px] text-slate-500 uppercase">Label</label>
@@ -385,6 +401,19 @@ const ConfigurationModal = ({
               <div className="grid grid-cols-1 gap-4">
                 {draftClient.brands.length > 0 ? draftClient.brands.map((brand) => (
                   <div key={brand.id} className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full border border-slate-700" style={{ backgroundColor: brand.primaryColor || '#64748B' }} />
+                        <span className="text-xs font-semibold text-slate-300">{brand.name || 'Untitled brand'}</span>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveBrand(brand.id)}
+                        className="rounded-full border border-rose-500/50 bg-rose-500/10 p-1.5 text-rose-300 hover:bg-rose-500/20 transition-colors"
+                        aria-label={`Remove ${brand.name || 'brand'}`}
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <label className="text-[11px] text-slate-500 uppercase">Brand Name</label>
