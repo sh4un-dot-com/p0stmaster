@@ -1,21 +1,21 @@
-# macOS Setup
+# Windows Setup
 
 This guide covers two paths:
 
-- running a downloaded unsigned Mac build
-- building p0stmaster locally on a Mac
+- running a downloaded unsigned Windows build
+- building p0stmaster locally on Windows 10 or Windows 11
 
 ## What to Expect
 
-Current Mac artifacts are:
+Current Windows artifacts are:
 
-- universal builds for Intel and Apple Silicon
+- x64 NSIS installer builds
+- x64 portable executable builds
 - unsigned
-- not notarized
 
-That means macOS may block first launch until you explicitly allow the app.
+That means Windows may show a SmartScreen warning until you explicitly allow the app.
 
-## Option 1: Use a Downloaded Mac Build
+## Option 1: Use a Downloaded Windows Build
 
 Get the app from one of these places:
 
@@ -25,50 +25,42 @@ Get the app from one of these places:
 
 Download either:
 
-- the `.dmg`
-- or the `.zip`
+- the installer `.exe`
+- or the portable `.exe`
 
 ### First launch for an unsigned app
 
-If macOS blocks the app:
+If Windows shows `Windows protected your PC`:
 
-1. Open the `.dmg` or extract the `.zip`
-2. Move `p0stmaster.app` into `/Applications`
-3. Right-click the app and choose `Open`
-4. Confirm `Open` again in the system prompt
+1. Click `More info`
+2. Confirm the app name is `p0stmaster`
+3. Click `Run anyway`
 
-If macOS still blocks it:
+If Windows marks the file as downloaded from the internet and keeps warning:
 
-1. Open `System Settings`
-2. Go to `Privacy & Security`
-3. Find the blocked-app message for p0stmaster
-4. Click `Open Anyway`
+1. Right-click the downloaded `.exe`
+2. Choose `Properties`
+3. On the `General` tab, check `Unblock` if present
+4. Click `Apply`
+5. Run the file again
 
-If the quarantine attribute still causes trouble after you intentionally trust the app, you can remove it manually:
+Use the installer build if you want Start menu shortcuts and a standard install flow.
 
-```bash
-xattr -dr com.apple.quarantine /Applications/p0stmaster.app
-```
+Use the portable build if you want to run the app directly without installing it.
 
-Only do that for a build you trust.
+Only bypass SmartScreen for a build you trust.
 
-## Option 2: Build Locally on macOS
+## Option 2: Build Locally on Windows
 
 ### Prerequisites
 
+- Windows 10 or Windows 11
 - Node.js 20 recommended
 - npm
-- Xcode Command Line Tools
-
-Install Xcode Command Line Tools if needed:
-
-```bash
-xcode-select --install
-```
 
 ### Clone and install
 
-```bash
+```powershell
 git clone https://github.com/AkitaEngineering/p0stmaster.git
 cd p0stmaster
 npm ci
@@ -76,7 +68,7 @@ npm ci
 
 ### Run locally in the browser
 
-```bash
+```powershell
 npm run serve
 ```
 
@@ -84,14 +76,14 @@ Open `http://localhost:4173`.
 
 ### Run the desktop app locally
 
-```bash
+```powershell
 npm run desktop
 ```
 
-### Build Mac artifacts
+### Build Windows artifacts
 
-```bash
-npm run desktop:mac
+```powershell
+npm run desktop:win
 ```
 
 Artifacts are written to:
@@ -102,8 +94,8 @@ release/
 
 Typical outputs:
 
-- `*.dmg`
-- `*.zip`
+- `p0stmaster Setup *.exe`
+- `p0stmaster *.exe`
 - `*.blockmap`
 
 ## First-Time In-App Setup
@@ -117,9 +109,9 @@ After the app opens:
 5. Add managed accounts for each platform you want to publish to
 6. Add optional feed sources for Live Feed Pulse
 
-## Live Publish Requirements on Mac
+## Live Publish Requirements on Windows
 
-Publishing rules are the same on Mac as other platforms.
+Publishing rules are the same on Windows as other platforms.
 
 You need:
 
@@ -130,9 +122,9 @@ You need:
 
 ## Troubleshooting
 
-### The app will not open because it is from an unidentified developer
+### The app will not open because Windows blocked it
 
-Use the right-click `Open` flow first. If that fails, use `Privacy & Security` then `Open Anyway`.
+Use the SmartScreen `More info` then `Run anyway` flow first. If the file still shows a downloaded-file warning, use the `Properties` then `Unblock` flow.
 
 ### The app opens but publishing does not work
 
@@ -156,10 +148,10 @@ Check:
 Check:
 
 - the feed URLs use `http` or `https`
-- the source is public and reachable from your Mac
+- the source is public and reachable from your Windows machine
 - the feed actually returns RSS, Atom, or a supported feed format
 
-### Where are Mac builds produced in CI?
+### Where are Windows builds produced in CI?
 
 The repository workflow publishes:
 

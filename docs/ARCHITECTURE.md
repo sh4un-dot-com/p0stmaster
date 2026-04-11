@@ -171,14 +171,15 @@ The current repository configuration does not sign or notarize the Mac app.
 
 Workflow file:
 
-- `.github/workflows/macos-build.yml`
+- `.github/workflows/desktop-build.yml`
 
 Current behavior:
 
 - runs on pushes and manual dispatch
 - builds macOS artifacts on `macos-14`
+- builds Windows artifacts on `windows-latest`
 - uploads build artifacts to the workflow run
-- updates a `nightly-macos` prerelease on `main`
+- updates a `nightly-desktop` prerelease on `main`
 - creates versioned GitHub releases for tags matching `v*`
 
 ## Operational Caveats
@@ -186,6 +187,7 @@ Current behavior:
 - There is no backend database; the local vault is the source of truth for the user session.
 - The app assumes a trusted local environment.
 - macOS builds are unsigned and unnotarized, so first-launch trust prompts are expected.
+- Windows builds are unsigned, so SmartScreen trust prompts are expected.
 
 ## Good Next Hardening Steps
 

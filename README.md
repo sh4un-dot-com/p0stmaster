@@ -12,12 +12,14 @@ It combines:
 
 ## Current Status
 
-The repository is set up for active local use and unsigned macOS distribution.
+The repository is set up for active local use and unsigned desktop distribution on macOS and Windows.
 
 - macOS packaging is universal for Apple Silicon and Intel
-- macOS GitHub Actions builds publish nightly prereleases from `main`
+- Windows packaging includes an NSIS installer and a portable executable
+- GitHub Actions builds publish desktop artifacts for macOS and Windows
 - version tags like `v0.1.0` publish versioned GitHub releases
-- macOS artifacts are currently unsigned and not notarized
+- macOS artifacts are unsigned and not notarized
+- Windows artifacts are unsigned and may trigger SmartScreen on first launch
 
 ## Features
 
@@ -68,6 +70,12 @@ Build unsigned universal macOS artifacts:
 npm run desktop:mac
 ```
 
+Build unsigned Windows artifacts:
+
+```bash
+npm run desktop:win
+```
+
 Artifacts are written to `release/`.
 
 ## Configuration Prerequisites
@@ -109,6 +117,7 @@ Add feed sources in Settings using:
 - `npm run start`: builds and serves in one step
 - `npm run desktop`: builds and launches Electron locally
 - `npm run desktop:mac`: builds unsigned universal macOS `dmg` and `zip` artifacts
+- `npm run desktop:win`: builds unsigned Windows installer and portable `.exe` artifacts
 
 ## Project Layout
 
@@ -117,22 +126,25 @@ Add feed sources in Settings using:
 - `serve.js`: local HTTP server plus AI, feeds, and publish proxy routes
 - `electron/main.js`: Electron bootstrap that launches the local server and window
 - `src/main.jsx`: React entry point
-- `.github/workflows/macos-build.yml`: macOS CI build and release workflow
+- `.github/workflows/desktop-build.yml`: combined macOS and Windows CI build and release workflow
 
 ## Documentation
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [SETUP_MAC.md](SETUP_MAC.md)
+- [SETUP_WINDOWS.md](SETUP_WINDOWS.md)
 
 ## Operational Notes
 
 - Persistence is stored locally in an encrypted vault under browser storage.
 - The current encryption passphrase is still defined in source code, so this is not the final form of secret management.
 - macOS builds are unsigned, so Gatekeeper may require `Open Anyway` or a right-click `Open` flow on first launch.
+- Windows builds are unsigned, so SmartScreen may require `More info` then `Run anyway` on first launch.
 
-## macOS Distribution Flow
+## Desktop Distribution Flow
 
-- Push to `main`: updates the `nightly-macos` prerelease with fresh artifacts
+- Push to `main`: updates the `nightly-desktop` prerelease with fresh macOS and Windows artifacts
 - Push a tag like `v0.1.0`: publishes a versioned GitHub release
 
 For Mac-specific setup and first-run notes, use [SETUP_MAC.md](SETUP_MAC.md).
+For Windows-specific setup and first-run notes, use [SETUP_WINDOWS.md](SETUP_WINDOWS.md).

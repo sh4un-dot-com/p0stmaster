@@ -87,6 +87,7 @@ jobs:
           name: windows-artifacts-${{ github.sha }}
           path: |
             release/**/*.exe
+            release/**/*.blockmap
             release/**/*.zip
           if-no-files-found: error
           retention-days: 14
