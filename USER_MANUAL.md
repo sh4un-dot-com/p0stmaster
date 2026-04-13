@@ -195,7 +195,7 @@ Managed accounts represent your social media profiles.
    - **Label** — a friendly name (e.g., "Main IG Account")
    - **Handle** — the platform handle (e.g., "@acmecorp")
    - **Brand** — link to a brand profile
-   - **Role** — optional role label
+   - **Role** — the operator role allowed to publish through this mapping (`creator`, `reviewer`, `publisher`, or `admin`)
 5. Save
 
 ### Why accounts matter for publishing
@@ -321,6 +321,8 @@ The compliance scanner runs automatically and surfaces:
 - Brand safety alerts based on governance rules
 - Unmapped platform warnings
 
+When **Brand Safe** is enabled, brand-safety warnings become publish blockers instead of advisory warnings.
+
 ---
 
 ## Publishing Content
@@ -335,6 +337,8 @@ Before the publish button activates, verify:
 - [ ] Each selected platform has a mapped account
 - [ ] Media-required platforms have a public media URL
 - [ ] Draft is approved (if approval is required)
+- [ ] Brand-safe warnings are cleared (if Brand Safe is enabled)
+- [ ] Selected platform accounts share the active role label (if Role Based is enabled)
 
 ### Publishing
 
@@ -399,8 +403,9 @@ When approval is enabled for a workspace:
 2. Go to the **Governance** section
 3. Toggle **Approval Required** on or off
 4. Additional governance options:
-   - **Brand Safe** — enable brand safety scanning
-   - **Role Based** — enable role-based access
+   - **Brand Safe** — block publish when the compliance scanner finds brand-safety issues
+   - **Role Based** — require every selected platform mapping to share the active managed-account role before publish
+   - **Current Operator Role** — set the local role for this workspace so approval and publish actions follow reviewer/publisher/admin rules
 
 ---
 

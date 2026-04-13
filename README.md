@@ -31,11 +31,12 @@ Built by [Akita Engineering](https://github.com/AkitaEngineering).
 See [FEATURES.md](FEATURES.md) for the full breakdown. Highlights:
 
 - **Multi-client workspaces** — each client gets its own brands, accounts, API keys, governance rules, and feed sources
+- **Role-aware governance** — current workspace operator roles, reviewer approvals, publisher gating, and brand-safe publish blockers
 - **AI Studio** — drafts, hooks, polish, hashtags, critique, platform adaptation, audience rewrites, threads, trend-driven copy, and AI calendars from one panel
 - **Platform-native previews** — see exactly how your post will look on Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok before you publish
 - **One-click live publishing** — powered by Ayrshare, publish to all connected platforms simultaneously
 - **Campaign planner** — use the quick planner or generate an AI-built 7-day strategic calendar in seconds
-- **Compliance scanner** — automatic brand-safety and guideline checks before content goes live
+- **Compliance scanner** — automatic brand-safety and guideline checks before content goes live, with governance-based publish blocking when enabled
 - **Brand kit analysis** — upload a logo and extract colour palettes, fonts, and brand signals automatically
 - **Live Feed Pulse** — pull trending content from RSS, Atom, and YouTube feeds for inspiration, then send it straight into AI Trend Spark
 - **Variants and repurposing** — generate A/B variants, audience rewrites, thread/carousel sequences, and local asset presets from one draft
@@ -168,7 +169,7 @@ styles/tailwind.css     Tailwind source stylesheet
 
 ## Operational Notes
 
-- All data persists locally in an encrypted vault (AES-256-GCM) stored in browser/Electron storage
+- All data persists locally in an encrypted vault (AES-256-GCM); web mode stores it in browser localStorage and desktop mode stores it in the app user-data directory
 - The vault passphrase is currently defined in source code — future releases will migrate to OS-native secret storage
 - macOS builds are unsigned: Gatekeeper will require right-click → Open or Open Anyway on first launch
 - Windows builds are unsigned: SmartScreen will require More info → Run anyway on first launch

@@ -30,7 +30,7 @@ const ConfigurationModal = ({
     saveConfiguration,
     cancelConfiguration,
   } = handlers;
-  const { PLATFORMS } = constants;
+  const { PLATFORMS, WORKSPACE_USER_ROLES } = constants;
   const isAyrshareReady = Boolean(draftClient.socialKeys.ayrshare && draftClient.socialKeys.ayrshare.trim());
   const getToggleCardClass = (isChecked) => (`rounded-2xl border p-3 flex items-center justify-between gap-3 transition-colors ${isChecked
     ? 'border-indigo-500/60 bg-indigo-500/10 shadow-[0_0_0_1px_rgba(99,102,241,0.15)]'
@@ -364,7 +364,7 @@ const ConfigurationModal = ({
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                       <div>
                         <label className="text-[11px] text-slate-500 uppercase">Platform</label>
                         <select
@@ -381,6 +381,23 @@ const ConfigurationModal = ({
                         </select>
                       </div>
                       <div>
+                        <label className="text-[11px] text-slate-500 uppercase">Brand</label>
+                        <select
+                          value={account.brandId}
+                          onChange={(event) => updateConfigDraftClient((client) => ({
+                            ...client,
+                            accounts: client.accounts.map((item) => item.id === account.id ? { ...item, brandId: event.target.value } : item),
+                          }))}
+                          className="w-full p-2 rounded-lg bg-black border border-slate-800 outline-none text-sm"
+                        >
+                          {draftClient.brands.length > 0 ? draftClient.brands.map((brand) => (
+                            <option key={brand.id} value={brand.id}>{brand.name || 'Untitled brand'}</option>
+                          )) : (
+                            <option value="">No brands configured</option>
+                          )}
+                        </select>
+                      </div>
+                      <div>
                         <label className="text-[11px] text-slate-500 uppercase">Role</label>
                         <input
                           value={account.role}
@@ -388,6 +405,7 @@ const ConfigurationModal = ({
                             ...client,
                             accounts: client.accounts.map((item) => item.id === account.id ? { ...item, role: event.target.value } : item),
                           }))}
+                          placeholder="creator, reviewer, publisher, admin"
                           className="w-full p-2 rounded-lg bg-black border border-slate-800 outline-none text-sm"
                         />
                       </div>
@@ -492,6 +510,22 @@ const ConfigurationModal = ({
                     <div className="text-sm font-semibold">Governance</div>
                     <div className="text-[11px] text-slate-500">Approval workflows and role-based checks.</div>
                   </div>
+                </div>
+                <div>
+                  <label className="text-[11px] text-slate-500 uppercase">Current Operator Role</label>
+                  <select
+                    value={draftClient.currentUserRole}
+                    onChange={(event) => updateConfigDraftClient((client) => ({
+                      ...client,
+                      currentUserRole: event.target.value,
+                    }))}
+                    className="mt-1 w-full rounded-lg border border-slate-800 bg-black p-2 text-sm outline-none"
+                  >
+                    {WORKSPACE_USER_ROLES.map((role) => (
+                      <option key={role.id} value={role.id}>{role.label}</option>
+                    ))}
+                  </select>
+                  <div className="mt-2 text-[11px] text-slate-500">This local operator role controls who can approve and publish when role-based access is enabled.</div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <label className={getToggleCardClass(draftClient.governance.approvalRequired)}>

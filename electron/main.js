@@ -1,4 +1,5 @@
-import { app, BrowserWindow, Menu, shell } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, shell } from 'electron';
+import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { startServer } from '../serve.js';
@@ -11,6 +12,34 @@ let serverHandle = null;
 
 const EXTERNAL_PROTOCOLS = new Set(['http:', 'https:', 'mailto:']);
 const ABOUT_EVENT = 'p0stmaster:open-about';
+const VAULT_FILENAME = 'vault.json';
+const VAULT_LOAD_CHANNEL = 'p0stmaster:vault-load';
+const VAULT_SAVE_CHANNEL = 'p0stmaster:vault-save';
+
+const getVaultFilePath = () => path.join(app.getPath('userData'), VAULT_FILENAME);
+
+const registerVaultHandlers = () => {
+  ipcMain.handle(VAULT_LOAD_CHANNEL, async () => {
+    try {
+      return await fs.readFile(getVaultFilePath(), 'utf8');
+    } catch (error) {
+      if (error && typeof error === 'object' && error.code === 'ENOENT') {
+        return null;
+      }
+
+      throw error;
+    }
+  });
+
+  ipcMain.handle(VAULT_SAVE_CHANNEL, async (_event, encryptedPayload) => {
+    if (typeof encryptedPayload !== 'string' || !encryptedPayload.trim()) {
+      throw new Error('Vault payload must be a non-empty string');
+    }
+
+    await fs.writeFile(getVaultFilePath(), encryptedPayload, 'utf8');
+    return true;
+  });
+};
 
 const openExternalUrl = async (targetUrl) => {
   try {
@@ -157,6 +186,7 @@ const createWindow = async () => {
     title: 'p0stmaster',
     webPreferences: {
       contextIsolation: true,
+      preload: path.join(__dirname, 'preload.cjs'),
       sandbox: true,
     },
   });
@@ -191,6 +221,7 @@ const createWindow = async () => {
 };
 
 app.whenReady().then(async () => {
+  registerVaultHandlers();
   await createWindow();
 
   app.on('activate', async () => {

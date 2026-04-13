@@ -53,6 +53,17 @@ const PALETTES = {
 };
 
 const DEFAULT_THEME = 'dark';
+const DEFAULT_PREVIEW_DEVICE = 'mobile';
+const DEFAULT_CONFIG_TAB = 'ai';
+const VALID_PREVIEW_DEVICES = new Set(['mobile', 'desktop']);
+const VALID_CONFIG_TABS = new Set(['clients', 'ai', 'social', 'brand']);
+const WORKSPACE_USER_ROLES = [
+  { id: 'creator', label: 'Creator' },
+  { id: 'reviewer', label: 'Reviewer' },
+  { id: 'publisher', label: 'Publisher' },
+  { id: 'admin', label: 'Admin' },
+];
+const WORKSPACE_USER_ROLE_IDS = new Set(WORKSPACE_USER_ROLES.map((role) => role.id));
 
 const PLATFORMS = [
   { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'text-pink-500', supportsStories: true },
@@ -97,6 +108,7 @@ const DEFAULT_CLIENT = {
   contactName: '',
   contactEmail: '',
   notes: '',
+  currentUserRole: 'publisher',
   aiProvider: 'gemini',
   apiKeys: { chatgpt: '', gemini: '', claude: '' },
   socialKeys: {
@@ -188,6 +200,29 @@ const fromBase64 = (str) => Uint8Array.from(atob(str), (char) => char.charCodeAt
 const createId = () => Math.random().toString(36).slice(2, 10);
 const cloneValue = (value) => JSON.parse(JSON.stringify(value));
 const shortenText = (text = '', max = 140) => (text.length <= max ? text : `${text.slice(0, max - 1)}...`);
+const normalizeRoleLabel = (value = '') => String(value || '').trim().toLowerCase();
+const getWorkspaceRoleLabel = (roleId = '') => {
+  const rawRole = String(roleId || '').trim();
+  const matchingRole = WORKSPACE_USER_ROLES.find((role) => role.id === normalizeRoleLabel(rawRole));
+
+  if (matchingRole) {
+    return matchingRole.label;
+  }
+
+  if (!rawRole) {
+    return 'Publisher';
+  }
+
+  return rawRole.charAt(0).toUpperCase() + rawRole.slice(1);
+};
+const getWorkspaceRolePermissions = (roleId = '') => {
+  const normalizedRole = normalizeRoleLabel(roleId);
+
+  return {
+    canApprove: normalizedRole === 'reviewer' || normalizedRole === 'admin',
+    canPublish: normalizedRole === 'publisher' || normalizedRole === 'admin',
+  };
+};
 const getElectronVersion = () => {
   const match = window.navigator.userAgent.match(/Electron\/(\S+)/i);
   return match ? match[1] : '';
@@ -218,6 +253,13 @@ const loadImageFromUrl = (src) => new Promise((resolve, reject) => {
   image.onload = () => resolve(image);
   image.onerror = () => reject(new Error('Unable to load image for brand analysis'));
   image.src = src;
+});
+
+const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+  reader.onerror = () => reject(new Error('Unable to read image file'));
+  reader.readAsDataURL(file);
 });
 
 const extractPaletteFromImage = async (src, swatchCount = 4) => {
@@ -296,7 +338,7 @@ const buildBlankAccount = (brandId = '', overrides = {}) => ({
   label: overrides.label ?? '',
   handle: overrides.handle ?? '',
   brandId: overrides.brandId || brandId,
-  role: overrides.role ?? '',
+  role: overrides.role ?? 'publisher',
 });
 
 const sanitizeSocialKeys = (socialKeys = {}) => {
@@ -342,6 +384,7 @@ const buildBlankClient = (overrides = {}) => {
     contactName: overrides.contactName ?? '',
     contactEmail: overrides.contactEmail ?? '',
     notes: overrides.notes ?? '',
+    currentUserRole: WORKSPACE_USER_ROLE_IDS.has(overrides.currentUserRole) ? overrides.currentUserRole : DEFAULT_CLIENT.currentUserRole,
     aiProvider: overrides.aiProvider || DEFAULT_CLIENT.aiProvider,
     apiKeys: { ...DEFAULT_CLIENT.apiKeys, ...(overrides.apiKeys || {}) },
     socialKeys: sanitizeSocialKeys(overrides.socialKeys),
@@ -387,6 +430,7 @@ const normalizeClient = (client, index = 0) => {
         contactName: '',
         contactEmail: '',
         notes: '',
+        currentUserRole: DEFAULT_CLIENT.currentUserRole,
         aiProvider: client?.aiProvider || DEFAULT_CLIENT.aiProvider,
         apiKeys: client?.apiKeys || {},
         socialKeys: client?.socialKeys || {},
@@ -405,6 +449,7 @@ const normalizeClient = (client, index = 0) => {
     contactName: sourceClient?.contactName ?? '',
     contactEmail: sourceClient?.contactEmail ?? '',
     notes: sourceClient?.notes ?? '',
+    currentUserRole: sourceClient?.currentUserRole,
     aiProvider: sourceClient?.aiProvider || DEFAULT_CLIENT.aiProvider,
     apiKeys: sourceClient?.apiKeys || {},
     socialKeys: sourceClient?.socialKeys || {},
@@ -450,6 +495,7 @@ const normalizeClient = (client, index = 0) => {
     selectedAccountId: normalizedAccounts.find((account) => account.id === sourceClient?.selectedAccountId)?.id
       || normalizedAccounts[0]?.id
       || '',
+    currentUserRole: WORKSPACE_USER_ROLE_IDS.has(sourceClient?.currentUserRole) ? sourceClient.currentUserRole : DEFAULT_CLIENT.currentUserRole,
     governance: { ...DEFAULT_CLIENT.governance, ...(sourceClient?.governance || {}) },
     apiKeys: { ...DEFAULT_CLIENT.apiKeys, ...(sourceClient?.apiKeys || {}) },
     socialKeys: sanitizeSocialKeys(sourceClient?.socialKeys),
@@ -475,6 +521,7 @@ const normalizeConfig = (value) => {
     contactName: value.contactName ?? '',
     contactEmail: value.contactEmail ?? '',
     notes: value.notes ?? '',
+    currentUserRole: value.currentUserRole,
     aiProvider: value.aiProvider,
     apiKeys: value.apiKeys,
     socialKeys: value.socialKeys,
@@ -528,10 +575,42 @@ const decryptPayload = async (encryptedPayload) => {
   return JSON.parse(decoder.decode(decrypted));
 };
 
+const saveVaultCipher = async (encryptedPayload) => {
+  const bridge = window.p0stmasterVault;
+
+  if (bridge?.save) {
+    try {
+      await bridge.save(encryptedPayload);
+      return;
+    } catch (error) {
+      console.warn('Desktop vault save failed, falling back to local storage.', error);
+    }
+  }
+
+  localStorage.setItem(STORAGE_KEY, encryptedPayload);
+};
+
+const loadVaultCipher = async () => {
+  const bridge = window.p0stmasterVault;
+
+  if (bridge?.load) {
+    try {
+      const storedValue = await bridge.load();
+      if (typeof storedValue === 'string' && storedValue.trim()) {
+        return storedValue;
+      }
+    } catch (error) {
+      console.warn('Desktop vault load failed, falling back to local storage.', error);
+    }
+  }
+
+  return localStorage.getItem(STORAGE_KEY);
+};
+
 const persistVault = async (state) => {
   try {
     const encrypted = await encryptPayload(state);
-    localStorage.setItem(STORAGE_KEY, encrypted);
+    await saveVaultCipher(encrypted);
   } catch (error) {
     console.error('Vault save failed', error);
   }
@@ -539,7 +618,7 @@ const persistVault = async (state) => {
 
 const loadVault = async () => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = await loadVaultCipher();
     if (!raw) return null;
     return await decryptPayload(raw);
   } catch (error) {
@@ -820,12 +899,11 @@ const App = () => {
   const [calendarPlan, setCalendarPlan] = useState([]);
   const [campaignPlan, setCampaignPlan] = useState([]);
   const [platformTrends, setPlatformTrends] = useState([]);
-  const [logoFile, setLogoFile] = useState(null);
   const [brandKitImageUrl, setBrandKitImageUrl] = useState('');
   const [brandKitExtras, setBrandKitExtras] = useState(null);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [configTab, setConfigTab] = useState('ai');
+  const [configTab, setConfigTab] = useState(DEFAULT_CONFIG_TAB);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
   const [saveBanner, setSaveBanner] = useState('');
   const [isRepurposing, setIsRepurposing] = useState(false);
@@ -840,13 +918,14 @@ const App = () => {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishStatus, setPublishStatus] = useState(null);
   const [isBrandKitProcessing, setIsBrandKitProcessing] = useState(false);
-  const [previewDevice, setPreviewDevice] = useState('mobile');
+  const [previewDevice, setPreviewDevice] = useState(DEFAULT_PREVIEW_DEVICE);
   const [themeMode, setThemeMode] = useState(DEFAULT_THEME);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const [liveFeedItems, setLiveFeedItems] = useState([]);
   const [liveFeedError, setLiveFeedError] = useState('');
   const [isRefreshingFeeds, setIsRefreshingFeeds] = useState(false);
   const [liveFeedUpdatedAt, setLiveFeedUpdatedAt] = useState('');
+  const [isVaultHydrated, setIsVaultHydrated] = useState(false);
 
   const fileInputRef = useRef(null);
   const feedRequestRef = useRef(0);
@@ -866,28 +945,49 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    let isCancelled = false;
+
     const hydrate = async () => {
-      if (!window.crypto?.subtle) return;
+      if (!window.crypto?.subtle) {
+        if (!isCancelled) {
+          setIsVaultHydrated(true);
+        }
+        return;
+      }
 
       const saved = await loadVault();
-      if (!saved) return;
+      if (isCancelled) return;
 
-      if (saved.config) setConfig(normalizeConfig(saved.config));
-      if (saved.sessionDraft) setSessionDraft(sanitizeSessionDraft(saved.sessionDraft));
-      if (Array.isArray(saved.draftHistory)) setDraftHistory(saved.draftHistory);
-      if (Array.isArray(saved.actionLog)) setActionLog(saved.actionLog);
-      if (Array.isArray(saved.calendarPlan)) setCalendarPlan(saved.calendarPlan);
-      if (Array.isArray(saved.campaignPlan)) setCampaignPlan(saved.campaignPlan);
-      if (Array.isArray(saved.platformTrends)) setPlatformTrends(saved.platformTrends);
-      if (Array.isArray(saved.liveFeedItems)) setLiveFeedItems(saved.liveFeedItems);
-      if (saved.liveFeedUpdatedAt) setLiveFeedUpdatedAt(saved.liveFeedUpdatedAt);
-      if (saved.themeMode) setThemeMode(saved.themeMode);
+      if (saved) {
+        if (saved.config) setConfig(normalizeConfig(saved.config));
+        if (saved.sessionDraft) setSessionDraft(sanitizeSessionDraft(saved.sessionDraft));
+        if (Array.isArray(saved.draftHistory)) setDraftHistory(saved.draftHistory);
+        if (Array.isArray(saved.actionLog)) setActionLog(saved.actionLog);
+        if (Array.isArray(saved.calendarPlan)) setCalendarPlan(saved.calendarPlan);
+        if (Array.isArray(saved.campaignPlan)) setCampaignPlan(saved.campaignPlan);
+        if (Array.isArray(saved.platformTrends)) setPlatformTrends(saved.platformTrends);
+        if (Array.isArray(saved.liveFeedItems)) setLiveFeedItems(saved.liveFeedItems);
+        if (saved.liveFeedUpdatedAt) setLiveFeedUpdatedAt(saved.liveFeedUpdatedAt);
+        if (saved.themeMode) setThemeMode(saved.themeMode);
+        if (VALID_PREVIEW_DEVICES.has(saved.previewDevice)) setPreviewDevice(saved.previewDevice);
+        if (VALID_CONFIG_TABS.has(saved.configTab)) setConfigTab(saved.configTab);
+        if (typeof saved.brandKitImageUrl === 'string') setBrandKitImageUrl(saved.brandKitImageUrl);
+        if (saved.brandKitExtras && typeof saved.brandKitExtras === 'object') setBrandKitExtras(saved.brandKitExtras);
+      }
+
+      setIsVaultHydrated(true);
     };
 
     void hydrate();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
+    if (!isVaultHydrated) return undefined;
+
     const persist = async () => {
       if (!window.crypto?.subtle) return;
 
@@ -902,11 +1002,16 @@ const App = () => {
         liveFeedItems,
         liveFeedUpdatedAt,
         themeMode,
+        previewDevice,
+        configTab,
+        brandKitImageUrl,
+        brandKitExtras,
       });
     };
 
     void persist();
-  }, [config, sessionDraft, draftHistory, actionLog, calendarPlan, campaignPlan, platformTrends, liveFeedItems, liveFeedUpdatedAt, themeMode]);
+    return undefined;
+  }, [config, sessionDraft, draftHistory, actionLog, calendarPlan, campaignPlan, platformTrends, liveFeedItems, liveFeedUpdatedAt, themeMode, previewDevice, configTab, brandKitImageUrl, brandKitExtras, isVaultHydrated]);
 
   useEffect(() => {
     if (!saveBanner) return undefined;
@@ -951,6 +1056,15 @@ const App = () => {
     [activeClient.accounts, sessionDraft.selectedAccountId],
   );
 
+  const currentUserRole = WORKSPACE_USER_ROLE_IDS.has(activeClient.currentUserRole)
+    ? activeClient.currentUserRole
+    : DEFAULT_CLIENT.currentUserRole;
+  const currentUserRoleLabel = getWorkspaceRoleLabel(currentUserRole);
+  const operatorPermissions = useMemo(
+    () => getWorkspaceRolePermissions(currentUserRole),
+    [currentUserRole],
+  );
+
   const selectedBrand = useMemo(
     () => {
       if (sessionDraft.selectedBrandId) {
@@ -962,9 +1076,43 @@ const App = () => {
     [activeClient.brands, selectedAccount, sessionDraft.selectedBrandId],
   );
 
-  const complianceWarnings = useMemo(
+  const contentComplianceWarnings = useMemo(
     () => scanCompliance(sessionDraft.content, sessionDraft.link, sessionDraft.selectedPlatforms),
     [sessionDraft.content, sessionDraft.link, sessionDraft.selectedPlatforms],
+  );
+
+  const brandAlignmentIssues = useMemo(
+    () => {
+      if (!selectedBrand.id || sessionDraft.selectedPlatforms.length === 0) {
+        return [];
+      }
+
+      return sessionDraft.selectedPlatforms.reduce((issues, platformId) => {
+        const account = getPublishingAccountForPlatform(activeClient, sessionDraft.selectedAccountId, platformId);
+        if (!account) {
+          return issues;
+        }
+
+        const platformLabel = PLATFORMS.find((platform) => platform.id === platformId)?.name || platformId;
+        if (!account.brandId) {
+          issues.push(`${platformLabel} account ${account.label || account.handle || 'mapping'} needs a brand mapping`);
+          return issues;
+        }
+
+        if (account.brandId !== selectedBrand.id) {
+          const mappedBrand = activeClient.brands.find((brand) => brand.id === account.brandId);
+          issues.push(`${platformLabel} account is mapped to ${mappedBrand?.name || 'another brand'} instead of ${selectedBrand.name || 'the active brand'}`);
+        }
+
+        return issues;
+      }, []);
+    },
+    [activeClient, selectedBrand.id, selectedBrand.name, sessionDraft.selectedAccountId, sessionDraft.selectedPlatforms],
+  );
+
+  const complianceWarnings = useMemo(
+    () => [...brandAlignmentIssues, ...contentComplianceWarnings],
+    [brandAlignmentIssues, contentComplianceWarnings],
   );
 
   const platformAlerts = useMemo(
@@ -1010,6 +1158,40 @@ const App = () => {
     [connectedPublishPlatforms, sessionDraft.selectedPlatforms],
   );
 
+  const roleBasedIssues = useMemo(
+    () => {
+      if (!activeClient.governance.roleBased || sessionDraft.selectedPlatforms.length === 0) {
+        return [];
+      }
+
+      if (normalizeRoleLabel(currentUserRole) === 'admin') {
+        return [];
+      }
+
+      return sessionDraft.selectedPlatforms.reduce((issues, platformId) => {
+        const account = getPublishingAccountForPlatform(activeClient, sessionDraft.selectedAccountId, platformId);
+        if (!account) {
+          return issues;
+        }
+
+        const accountRole = String(account.role || '').trim();
+        if (!accountRole) {
+          const platformLabel = PLATFORMS.find((platform) => platform.id === platformId)?.name || platformId;
+          issues.push(`${platformLabel} account ${account.label || account.handle || 'mapping'} needs a role label`);
+          return issues;
+        }
+
+        if (normalizeRoleLabel(accountRole) !== normalizeRoleLabel(currentUserRole)) {
+          const platformLabel = PLATFORMS.find((platform) => platform.id === platformId)?.name || platformId;
+          issues.push(`${platformLabel} account requires ${getWorkspaceRoleLabel(accountRole)} access, current role is ${currentUserRoleLabel}`);
+        }
+
+        return issues;
+      }, []);
+    },
+    [activeClient, currentUserRole, currentUserRoleLabel, sessionDraft.selectedAccountId, sessionDraft.selectedPlatforms],
+  );
+
   const publishDisabledReason = useMemo(() => {
     if (sessionDraft.selectedPlatforms.length === 0) {
       return 'Select at least one platform';
@@ -1033,13 +1215,25 @@ const App = () => {
       return 'Approval required before live publishing';
     }
 
+    if (activeClient.governance.roleBased && !operatorPermissions.canPublish) {
+      return `${currentUserRoleLabel} role cannot publish. Switch to Publisher or Admin.`;
+    }
+
+    if (activeClient.governance.brandSafe && complianceWarnings.length > 0) {
+      return `Brand-safe mode blocked publish: ${complianceWarnings[0]}${complianceWarnings.length > 1 ? ` (+${complianceWarnings.length - 1} more)` : ''}`;
+    }
+
+    if (activeClient.governance.roleBased && roleBasedIssues.length > 0) {
+      return `Role-based access blocked publish: ${roleBasedIssues[0]}${roleBasedIssues.length > 1 ? ` (+${roleBasedIssues.length - 1} more)` : ''}`;
+    }
+
     if (unmappedPublishPlatforms.length > 0) {
       const labels = unmappedPublishPlatforms.map((platformId) => PLATFORMS.find((platform) => platform.id === platformId)?.name || platformId);
       return `Live provider mapping required in this workspace for ${labels.join(', ')}`;
     }
 
     return '';
-  }, [activeClient.governance.approvalRequired, sessionDraft, unmappedPublishPlatforms]);
+  }, [activeClient.governance.approvalRequired, activeClient.governance.brandSafe, activeClient.governance.roleBased, currentUserRoleLabel, operatorPermissions.canPublish, sessionDraft, complianceWarnings, roleBasedIssues, unmappedPublishPlatforms]);
 
   const previewGridClass = previewDevice === 'mobile' ? 'grid-cols-1 justify-items-center' : 'md:grid-cols-2 items-start';
   const previewCardClass = previewDevice === 'mobile' ? 'w-full max-w-[360px]' : 'w-full';
@@ -1079,6 +1273,19 @@ const App = () => {
     }));
     const accountLabel = activeClient.accounts.find((account) => account.id === accountId)?.label || 'selected account';
     logAction('account', `Switched publishing account to ${accountLabel}`);
+  };
+
+  const handleSelectCurrentUserRole = (roleId) => {
+    const nextRole = WORKSPACE_USER_ROLE_IDS.has(roleId) ? roleId : DEFAULT_CLIENT.currentUserRole;
+
+    setConfig((prev) => ({
+      ...prev,
+      clients: prev.clients.map((client) => (
+        client.id === prev.selectedClientId ? { ...client, currentUserRole: nextRole } : client
+      )),
+    }));
+
+    logAction('governance', `Switched workspace role to ${getWorkspaceRoleLabel(nextRole)}`);
   };
 
   const handleAddClientWorkspace = () => {
@@ -1269,15 +1476,20 @@ const App = () => {
     void handleRefreshLiveFeeds({ silent: true, client: activeClient });
   }, [activeClient]);
 
-  const openConfig = () => {
+  const closeTransientPanels = () => {
     setIsQuickActionsOpen(false);
     setIsAboutOpen(false);
+    setIsAiMenuOpen(false);
+  };
+
+  const openConfig = () => {
+    closeTransientPanels();
     setConfigDraft(cloneValue(config));
     setIsConfigOpen(true);
   };
 
   const openAbout = () => {
-    setIsQuickActionsOpen(false);
+    closeTransientPanels();
     setIsConfigOpen(false);
     setIsAboutOpen(true);
   };
@@ -1308,6 +1520,10 @@ const App = () => {
       liveFeedItems,
       liveFeedUpdatedAt,
       themeMode,
+      previewDevice,
+      configTab,
+      brandKitImageUrl,
+      brandKitExtras,
     });
 
     setIsSavingConfig(false);
@@ -1486,26 +1702,33 @@ const App = () => {
     setSaveBanner('AI overlays cleared — using default previews');
   };
 
-  const handleLogoUpload = (event) => {
+  const handleLogoUpload = async (event) => {
     const file = event.target.files?.[0];
+    event.target.value = '';
+
     if (!file) return;
 
     revokeObjectUrl(brandKitImageUrl);
 
-    const nextImageUrl = URL.createObjectURL(file);
-    setLogoFile(file);
-    setBrandKitImageUrl(nextImageUrl);
-    setBrandKitExtras({
-      name: file.name,
-      type: file.type,
-      size: `${Math.round(file.size / 1024)} KB`,
-    });
-    setSaveBanner('Brand kit image uploaded');
-    event.target.value = '';
+    try {
+      const nextImageUrl = await readFileAsDataUrl(file);
+      setBrandKitImageUrl(nextImageUrl);
+      setBrandKitExtras({
+        name: file.name,
+        type: file.type,
+        size: `${Math.round(file.size / 1024)} KB`,
+      });
+      logAction('brand', 'Uploaded brand kit artwork');
+      setSaveBanner('Brand kit image uploaded');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Brand kit image upload failed';
+      logAction('brand', `Brand kit image upload failed: ${message}`);
+      setSaveBanner(message);
+    }
   };
 
   const handleBrandKitUpload = async () => {
-    if (!logoFile || !brandKitImageUrl) return;
+    if (!brandKitImageUrl) return;
 
     setIsBrandKitProcessing(true);
 
@@ -1560,6 +1783,13 @@ const App = () => {
   };
 
   const handleApproveDraft = () => {
+    if (activeClient.governance.roleBased && !operatorPermissions.canApprove) {
+      const message = `${currentUserRoleLabel} role cannot approve drafts. Switch to Reviewer or Admin.`;
+      logAction('approval', `Approval blocked: ${message}`);
+      setSaveBanner(message);
+      return;
+    }
+
     setSessionDraft((prev) => ({ ...prev, approvalStatus: 'approved' }));
     logAction('approval', 'Approved the current draft for publishing');
     setSaveBanner('Draft approved');
@@ -1567,6 +1797,7 @@ const App = () => {
 
   const handleSubmit = async () => {
     if (publishDisabledReason) {
+      logAction('publish', `Publish blocked: ${publishDisabledReason}`);
       setSaveBanner(publishDisabledReason);
       return;
     }
@@ -1713,11 +1944,15 @@ const App = () => {
         saveBanner={saveBanner}
         onThemeChange={(mode) => {
           setThemeMode(mode);
-          setIsQuickActionsOpen(false);
+          closeTransientPanels();
         }}
         onOpenAbout={openAbout}
         onOpenConfig={openConfig}
-        onToggleQuickActions={() => setIsQuickActionsOpen((prev) => !prev)}
+        onToggleQuickActions={() => {
+          setIsAboutOpen(false);
+          setIsAiMenuOpen(false);
+          setIsQuickActionsOpen((prev) => !prev);
+        }}
         onRefreshLiveFeeds={() => handleRefreshLiveFeeds()}
         onDismissBanner={() => {
           setSaveBanner('');
@@ -1731,12 +1966,19 @@ const App = () => {
           state={{
             config,
             activeClient,
+            currentUserRole,
+            currentUserRoleLabel,
+            operatorPermissions,
+            selectedAccount,
             selectedBrand,
             sessionDraft,
             campaignPlan,
             adaptedCaptions,
             audienceVariants,
             assetVariants,
+            complianceWarnings,
+            brandAlignmentIssues,
+            roleBasedIssues,
             isRepurposing,
             isAiGenerating,
             isAiMenuOpen,
@@ -1753,6 +1995,7 @@ const App = () => {
           handlers={{
             handleClientSelection,
             handleSelectAccount,
+            handleSelectCurrentUserRole,
             handleSelectBrand,
             handleGenerateCalendar,
             handleBuildCampaign,
@@ -1770,7 +2013,7 @@ const App = () => {
             handleUseThreadPart,
             handleClearAiOverlays,
           }}
-          constants={{ PLATFORMS }}
+          constants={{ PLATFORMS, WORKSPACE_USER_ROLES }}
         />
 
         <PreviewPanel
@@ -1788,7 +2031,6 @@ const App = () => {
             calendarPlan,
             brandKitImageUrl,
             brandKitExtras,
-            logoFile,
             isBrandKitProcessing,
             platformTrends,
             liveFeedItems,
@@ -1844,7 +2086,7 @@ const App = () => {
           saveConfiguration,
           cancelConfiguration,
         }}
-        constants={{ PLATFORMS }}
+        constants={{ PLATFORMS, WORKSPACE_USER_ROLES }}
       />
     </div>
   );

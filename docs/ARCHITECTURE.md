@@ -106,6 +106,7 @@ Each client workspace carries its own configuration envelope, including:
 - feed sources
 - managed accounts
 - brands
+- current workspace operator role
 - governance flags
 
 Governance currently includes:
@@ -114,11 +115,22 @@ Governance currently includes:
 - `brandSafe`
 - `roleBased`
 
+Runtime enforcement currently includes:
+
+- `approvalRequired` blocks publish until the draft is approved
+- `brandSafe` blocks publish when the compliance scanner returns brand-safety warnings
+- `roleBased` blocks publish when selected platform accounts do not share the active managed-account role label
+
 The active client drives publish eligibility, selected accounts, brand signals, and live feed refreshes.
 
 ## Persistence
 
-The app persists local state to a vault stored in browser storage.
+The app persists local state to an encrypted vault.
+
+Storage backend depends on runtime:
+
+- web mode stores the encrypted vault in browser `localStorage`
+- desktop mode stores the encrypted vault in the Electron user-data directory via a preload bridge
 
 Persisted areas include:
 
@@ -129,6 +141,9 @@ Persisted areas include:
 - generated plans
 - trend and feed data
 - selected theme
+- preview layout preference
+- last-opened configuration tab
+- brand-kit analysis state
 
 The vault uses encrypted storage, but there is an important limitation:
 

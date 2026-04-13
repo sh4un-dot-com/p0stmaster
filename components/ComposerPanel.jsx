@@ -5,12 +5,19 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
   const {
     config,
     activeClient,
+    currentUserRole,
+    currentUserRoleLabel,
+    operatorPermissions,
+    selectedAccount,
     selectedBrand,
     sessionDraft,
     campaignPlan,
     adaptedCaptions,
     audienceVariants,
     assetVariants,
+    complianceWarnings,
+    brandAlignmentIssues,
+    roleBasedIssues,
     isRepurposing,
     isAiGenerating,
     isAiMenuOpen,
@@ -28,6 +35,7 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
   const {
     handleClientSelection,
     handleSelectAccount,
+    handleSelectCurrentUserRole,
     handleSelectBrand,
     handleGenerateCalendar,
     handleBuildCampaign,
@@ -46,7 +54,7 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
     handleClearAiOverlays,
   } = handlers;
 
-  const { PLATFORMS } = constants;
+  const { PLATFORMS, WORKSPACE_USER_ROLES } = constants;
   const hasAccounts = activeClient.accounts.length > 0;
   const connectedPlatformLabels = connectedPublishPlatforms
     .map((platformId) => PLATFORMS.find((platform) => platform.id === platformId)?.name || platformId)
@@ -75,6 +83,26 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
   const neutralEmptyStateClass = isLightTheme
     ? 'rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-600'
     : 'rounded-2xl border border-slate-800 bg-slate-900 p-4 text-slate-500';
+  const governanceIssueCount = complianceWarnings.length + roleBasedIssues.length;
+  const governancePanelClass = governanceIssueCount > 0 ? warningPanelClass : publishFeedbackClass;
+  const activeAccountRoleLabel = selectedAccount.role?.trim() || 'Unassigned';
+  const roleBasedStatus = roleBasedIssues.length > 0
+    ? `${roleBasedIssues.length} alignment issue${roleBasedIssues.length === 1 ? '' : 's'} detected`
+    : !operatorPermissions.canPublish
+      ? `${currentUserRoleLabel} cannot publish while role-based access is enabled`
+      : sessionDraft.selectedPlatforms.length > 0
+      ? 'Selected platforms align to the active role'
+      : 'Select platforms to validate role alignment';
+  const brandSafeStatus = complianceWarnings.length > 0
+    ? `${complianceWarnings.length} brand-safety blocker${complianceWarnings.length === 1 ? '' : 's'} detected`
+    : sessionDraft.content.trim() || sessionDraft.link.trim() || sessionDraft.selectedPlatforms.length > 0
+      ? 'No brand-safety blockers detected'
+      : 'Draft content will be scanned as you compose';
+  const brandAlignmentStatus = brandAlignmentIssues.length > 0
+    ? `${brandAlignmentIssues.length} brand/account mismatch${brandAlignmentIssues.length === 1 ? '' : 'es'} detected`
+    : selectedBrand.id
+      ? 'Selected brand matches the mapped publish accounts'
+      : 'Select a brand to validate account mappings';
 
   return (
     <section className="lg:col-span-5 border-r border-slate-800 min-h-[calc(100vh-64px)] p-8">
@@ -118,6 +146,19 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
                 <option value="">No accounts configured</option>
               )}
             </select>
+            <div>
+              <label className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Current Operator Role</label>
+              <select
+                value={currentUserRole}
+                onChange={(event) => handleSelectCurrentUserRole(event.target.value)}
+                className={`mt-2 w-full p-3 rounded-2xl ${theme.card} border border-slate-800 text-sm outline-none`}
+              >
+                {WORKSPACE_USER_ROLES.map((role) => (
+                  <option key={role.id} value={role.id}>{role.label}</option>
+                ))}
+              </select>
+              <div className="mt-2 text-[11px] text-slate-500">Reviewer and Admin can approve. Publisher and Admin can publish when role-based access is enabled.</div>
+            </div>
             {!hasAccounts && (
               <div className={warningPanelClass}>
                 <div>Add at least one managed account for this workspace in Platform Configuration before you attempt live publishing.</div>
@@ -154,6 +195,23 @@ const ComposerPanel = ({ theme, state, handlers, constants }) => {
                 <div className="text-sm font-semibold">{selectedBrand.voice || 'Not set'}</div>
               </div>
             </div>
+            {(activeClient.governance.brandSafe || activeClient.governance.roleBased) && (
+              <div className={governancePanelClass}>
+                {activeClient.governance.brandSafe && (
+                  <div>Brand-safe mode: {brandSafeStatus}</div>
+                )}
+                {activeClient.governance.roleBased && (
+                  <div className={activeClient.governance.brandSafe ? 'mt-2 opacity-90' : ''}>
+                    Role-based access: operator role {currentUserRoleLabel} • account role {activeAccountRoleLabel} • {roleBasedStatus}
+                  </div>
+                )}
+                {activeClient.governance.brandSafe && brandAlignmentIssues.length > 0 && (
+                  <div className="mt-2 opacity-90">
+                    Brand mapping: {brandAlignmentStatus}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className={`rounded-3xl border border-slate-800 ${theme.card} p-5 space-y-4`}>

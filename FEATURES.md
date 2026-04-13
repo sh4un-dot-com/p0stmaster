@@ -9,6 +9,7 @@ Complete feature catalogue for p0stmaster.
 Manage multiple clients from a single app instance without logging in and out.
 
 - **Isolated workspaces** — each client has its own name, company, contact info, notes, API keys, brands, accounts, feeds, and governance rules
+- **Operator context per workspace** — each client can keep its own current operator role for reviewer/publisher workflows
 - **Instant switching** — select a workspace from the Client Mode dropdown and every panel updates immediately
 - **No cross-contamination** — credentials, brand kits, and publishing accounts are scoped per client
 
@@ -71,9 +72,10 @@ Publish directly to seven major platforms through the Ayrshare API — no manual
 ### Publishing features
 
 - **Connected delivery status** — real-time indicators show which platforms are ready vs. missing mappings
-- **Publish gating** — the app enforces all prerequisites (API key, mapped account, media URL, approval) before enabling the publish button
+- **Publish gating** — the app enforces all prerequisites (API key, mapped account, media URL, approval, brand-safe blockers, and role alignment) before enabling the publish button
 - **Publish status feedback** — per-platform success/failure reporting after publish
 - **Account mapping** — each platform maps to a specific managed account with label, handle, brand, and role
+- **Operator role switching** — switch the local workspace role between creator, reviewer, publisher, and admin without leaving the composer
 
 ---
 
@@ -146,6 +148,8 @@ Each workspace supports multiple brand profiles with:
 - Automatic brand-safety checks on draft content
 - Platform-specific alerts (e.g., character limits, media requirements)
 - Warnings surface in the preview panel before you publish
+- When **Brand Safe** is enabled, brand-safety warnings block publish until resolved
+- When **Role Based** is enabled, all selected platform mappings must share the active account role before publish is allowed
 
 ---
 

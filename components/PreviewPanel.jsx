@@ -28,7 +28,6 @@ const PreviewPanel = ({ theme, state, handlers, constants, refs, formatters }) =
     calendarPlan,
     brandKitImageUrl,
     brandKitExtras,
-    logoFile,
     isBrandKitProcessing,
     platformTrends,
     liveFeedItems,
@@ -56,6 +55,7 @@ const PreviewPanel = ({ theme, state, handlers, constants, refs, formatters }) =
   const brandVoice = selectedBrand.voice || 'No brand voice configured';
   const brandHashtags = selectedBrand.hashtags.length > 0 ? selectedBrand.hashtags.join(' ') : 'No hashtags configured';
   const brandCity = selectedBrand.city || 'Market not configured';
+  const hasBrandKitImage = Boolean(brandKitImageUrl);
 
   return (
     <section className={`lg:col-span-7 ${theme.bg} p-8 flex flex-col items-center sticky top-16 h-[calc(100vh-64px)] overflow-y-auto`}>
@@ -331,9 +331,9 @@ const PreviewPanel = ({ theme, state, handlers, constants, refs, formatters }) =
                 />
               </label>
               <button
-                disabled={!logoFile || isBrandKitProcessing}
+                disabled={!hasBrandKitImage || isBrandKitProcessing}
                 onClick={handleBrandKitUpload}
-                className={`w-full rounded-2xl px-4 py-3 text-sm font-semibold transition-colors ${logoFile ? 'bg-indigo-500 text-white hover:bg-indigo-400' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+                className={`w-full rounded-2xl px-4 py-3 text-sm font-semibold transition-colors ${hasBrandKitImage ? 'bg-indigo-500 text-white hover:bg-indigo-400' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
               >
                 {isBrandKitProcessing ? 'Analyzing brand kit...' : 'Extract brand signals'}
               </button>
