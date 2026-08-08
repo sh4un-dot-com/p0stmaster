@@ -145,9 +145,12 @@ Persisted areas include:
 - last-opened configuration tab
 - brand-kit analysis state
 
-The vault uses encrypted storage with a locally generated per-install key. The key is stored locally and is not included in source control.
+The vault uses encrypted storage with a locally generated per-install key. The key is not included in source control.
 
-That means the vault is protected against casual local inspection, but it does not replace OS-native secret management or device-level disk encryption.
+- web mode keeps the key in browser `localStorage`
+- desktop mode stores the key via Electron `safeStorage` (OS-backed when available), with local storage as a fallback
+
+That means the vault is protected against casual local inspection. On desktop, key material is further wrapped by the OS secret store when `safeStorage` encryption is available. It still does not replace full-disk encryption.
 
 ## Build and Packaging
 
@@ -204,7 +207,6 @@ Current behavior:
 
 ## Good Next Hardening Steps
 
-- add OS-native secure storage for provider credentials and vault key management
-- add OS-native secure storage for provider credentials
+- extend OS-native secure storage to individual provider credentials beyond vault-key wrapping
 - split application state from view logic in `p0stmaster.jsx` as the codebase grows
 - add automated tests around publish gating and feed normalization

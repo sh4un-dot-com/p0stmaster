@@ -17,7 +17,11 @@ import ConfigurationModal from './components/ConfigurationModal.jsx';
 
 const STORAGE_KEY = 'p0stmaster_vault';
 const VAULT_KEY_STORAGE = 'p0stmaster_vault_key';
+// Pre-release builds used a fixed passphrase. Kept only to migrate existing vaults.
+const LEGACY_VAULT_PASSPHRASE = 'akita-engineering-strong-vault-2026';
 const APP_VERSION = packageMetadata.version || '0.0.0';
+
+let cachedVaultKey = null;
 
 const PALETTES = {
   dark: {
@@ -538,36 +542,83 @@ const normalizeConfig = (value) => {
   };
 };
 
-const getVaultKey = () => {
-  if (typeof window === 'undefined' || !window.crypto) {
+const createVaultKey = () => {
+  if (typeof window === 'undefined' || !window.crypto?.getRandomValues) {
     throw new Error('Vault key generation unavailable');
-  }
-
-  try {
-    const storage = window.localStorage;
-    if (storage) {
-      let vaultKey = storage.getItem(VAULT_KEY_STORAGE);
-      if (typeof vaultKey === 'string' && vaultKey.trim()) {
-        return vaultKey;
-      }
-
-      const randomBytes = new Uint8Array(32);
-      window.crypto.getRandomValues(randomBytes);
-      vaultKey = toBase64(randomBytes);
-      try {
-        storage.setItem(VAULT_KEY_STORAGE, vaultKey);
-      } catch {
-        // Ignore storage write failures and keep working with the generated key.
-      }
-      return vaultKey;
-    }
-  } catch {
-    // Fall through to random key generation if localStorage is unavailable.
   }
 
   const randomBytes = new Uint8Array(32);
   window.crypto.getRandomValues(randomBytes);
   return toBase64(randomBytes);
+};
+
+const readLocalVaultKey = () => {
+  try {
+    const vaultKey = window.localStorage?.getItem(VAULT_KEY_STORAGE);
+    return typeof vaultKey === 'string' && vaultKey.trim() ? vaultKey : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeLocalVaultKey = (vaultKey) => {
+  try {
+    window.localStorage?.setItem(VAULT_KEY_STORAGE, vaultKey);
+  } catch {
+    // Ignore storage write failures and keep working with the generated key.
+  }
+};
+
+const persistVaultKey = async (vaultKey) => {
+  const bridge = window.p0stmasterVault;
+
+  if (bridge?.saveKey) {
+    try {
+      await bridge.saveKey(vaultKey);
+      return;
+    } catch (error) {
+      console.warn('Desktop vault key save failed, falling back to local storage.', error);
+    }
+  }
+
+  writeLocalVaultKey(vaultKey);
+};
+
+const getVaultKey = async () => {
+  if (cachedVaultKey) {
+    return cachedVaultKey;
+  }
+
+  const bridge = window.p0stmasterVault;
+  if (bridge?.loadKey) {
+    try {
+      const desktopKey = await bridge.loadKey();
+      if (typeof desktopKey === 'string' && desktopKey.trim()) {
+        cachedVaultKey = desktopKey;
+        return cachedVaultKey;
+      }
+    } catch (error) {
+      console.warn('Desktop vault key load failed, falling back to local storage.', error);
+    }
+  }
+
+  const localKey = readLocalVaultKey();
+  if (localKey) {
+    cachedVaultKey = localKey;
+    if (bridge?.saveKey) {
+      try {
+        await bridge.saveKey(localKey);
+      } catch {
+        // Keep using the local key if desktop promotion fails.
+      }
+    }
+    return cachedVaultKey;
+  }
+
+  const vaultKey = createVaultKey();
+  cachedVaultKey = vaultKey;
+  await persistVaultKey(vaultKey);
+  return cachedVaultKey;
 };
 
 const deriveKey = async (passphrase, salt) => {
@@ -583,12 +634,20 @@ const deriveKey = async (passphrase, salt) => {
   );
 };
 
+const decryptPayloadWithPassphrase = async (encryptedPayload, passphrase) => {
+  const { salt, iv, cipher } = JSON.parse(encryptedPayload);
+  const key = await deriveKey(passphrase, fromBase64(salt));
+  const decrypted = await window.crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromBase64(iv) }, key, fromBase64(cipher));
+  const decoder = new TextDecoder();
+  return JSON.parse(decoder.decode(decrypted));
+};
+
 const encryptPayload = async (payload) => {
   const text = JSON.stringify(payload);
   const encoder = new TextEncoder();
   const data = encoder.encode(text);
   const salt = window.crypto.getRandomValues(new Uint8Array(16));
-  const key = await deriveKey(getVaultKey(), salt);
+  const key = await deriveKey(await getVaultKey(), salt);
   const iv = window.crypto.getRandomValues(new Uint8Array(12));
   const encrypted = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
 
@@ -600,11 +659,16 @@ const encryptPayload = async (payload) => {
 };
 
 const decryptPayload = async (encryptedPayload) => {
-  const { salt, iv, cipher } = JSON.parse(encryptedPayload);
-  const key = await deriveKey(getVaultKey(), fromBase64(salt));
-  const decrypted = await window.crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromBase64(iv) }, key, fromBase64(cipher));
-  const decoder = new TextDecoder();
-  return JSON.parse(decoder.decode(decrypted));
+  try {
+    return await decryptPayloadWithPassphrase(encryptedPayload, await getVaultKey());
+  } catch (primaryError) {
+    // Migrate vaults encrypted with the pre-release fixed passphrase.
+    try {
+      return await decryptPayloadWithPassphrase(encryptedPayload, LEGACY_VAULT_PASSPHRASE);
+    } catch {
+      throw primaryError;
+    }
+  }
 };
 
 const saveVaultCipher = async (encryptedPayload) => {

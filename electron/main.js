@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, shell, safeStorage } from 'electron';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -13,10 +13,16 @@ let serverHandle = null;
 const EXTERNAL_PROTOCOLS = new Set(['http:', 'https:', 'mailto:']);
 const ABOUT_EVENT = 'p0stmaster:open-about';
 const VAULT_FILENAME = 'vault.json';
+const VAULT_KEY_FILENAME = 'vault.key';
 const VAULT_LOAD_CHANNEL = 'p0stmaster:vault-load';
 const VAULT_SAVE_CHANNEL = 'p0stmaster:vault-save';
+const VAULT_KEY_LOAD_CHANNEL = 'p0stmaster:vault-key-load';
+const VAULT_KEY_SAVE_CHANNEL = 'p0stmaster:vault-key-save';
 
 const getVaultFilePath = () => path.join(app.getPath('userData'), VAULT_FILENAME);
+const getVaultKeyFilePath = () => path.join(app.getPath('userData'), VAULT_KEY_FILENAME);
+
+const isNonEmptyString = (value) => typeof value === 'string' && Boolean(value.trim());
 
 const registerVaultHandlers = () => {
   ipcMain.handle(VAULT_LOAD_CHANNEL, async () => {
@@ -32,11 +38,42 @@ const registerVaultHandlers = () => {
   });
 
   ipcMain.handle(VAULT_SAVE_CHANNEL, async (_event, encryptedPayload) => {
-    if (typeof encryptedPayload !== 'string' || !encryptedPayload.trim()) {
+    if (!isNonEmptyString(encryptedPayload)) {
       throw new Error('Vault payload must be a non-empty string');
     }
 
     await fs.writeFile(getVaultFilePath(), encryptedPayload, 'utf8');
+    return true;
+  });
+
+  ipcMain.handle(VAULT_KEY_LOAD_CHANNEL, async () => {
+    try {
+      const storedValue = await fs.readFile(getVaultKeyFilePath());
+
+      if (safeStorage.isEncryptionAvailable()) {
+        return safeStorage.decryptString(storedValue);
+      }
+
+      return storedValue.toString('utf8');
+    } catch (error) {
+      if (error && typeof error === 'object' && error.code === 'ENOENT') {
+        return null;
+      }
+
+      throw error;
+    }
+  });
+
+  ipcMain.handle(VAULT_KEY_SAVE_CHANNEL, async (_event, vaultKey) => {
+    if (!isNonEmptyString(vaultKey)) {
+      throw new Error('Vault key must be a non-empty string');
+    }
+
+    const payload = safeStorage.isEncryptionAvailable()
+      ? safeStorage.encryptString(vaultKey)
+      : Buffer.from(vaultKey, 'utf8');
+
+    await fs.writeFile(getVaultKeyFilePath(), payload);
     return true;
   });
 };
@@ -186,8 +223,9 @@ const createWindow = async () => {
     title: 'p0stmaster',
     webPreferences: {
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.cjs'),
+      nodeIntegration: false,
       sandbox: true,
+      preload: path.join(__dirname, 'preload.cjs'),
     },
   });
 

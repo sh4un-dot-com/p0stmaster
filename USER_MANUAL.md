@@ -504,9 +504,15 @@ Your theme selection persists across sessions.
 
 ### Data seems missing after reopening
 
-All data is stored in the browser's local storage (encrypted vault). If you:
-- Cleared browser data, the vault is gone
-- Switched browsers, each browser has its own vault
+Data is stored in an encrypted local vault.
+
+- **Web mode:** browser `localStorage` holds both the encrypted vault and the vault key
+- **Desktop mode:** the encrypted vault lives in the app user-data directory; the vault key is wrapped with OS `safeStorage` when available
+
+If you:
+- Cleared browser data (web mode), the vault is gone
+- Switched browsers (web mode), each browser has its own vault
+- Reset or deleted the desktop app user-data directory, the vault is gone
 - In Electron, data persists in the app's storage directory
 
 ### Previews look wrong

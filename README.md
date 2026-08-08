@@ -170,7 +170,8 @@ styles/tailwind.css     Tailwind source stylesheet
 ## Operational Notes
 
 - All data persists locally in an encrypted vault (AES-256-GCM); web mode stores it in browser localStorage and desktop mode stores it in the app user-data directory
-- The vault uses a randomly generated local encryption key per installation; if local storage is cleared, the encrypted vault becomes unrecoverable
+- The vault uses a randomly generated local encryption key per installation; desktop builds wrap that key with OS `safeStorage` when available
+- If the vault key is lost (cleared browser storage or wiped user-data), the encrypted vault becomes unrecoverable
 - macOS builds are unsigned: Gatekeeper will require right-click → Open or Open Anyway on first launch
 - Windows builds are unsigned: SmartScreen will require More info → Run anyway on first launch
 
@@ -183,7 +184,7 @@ styles/tailwind.css     Tailwind source stylesheet
 
 ## License
 
-See the repository for license details.
+[GPL-3.0-only](LICENSE) — see `LICENSE` for the full text.
 
 ---
 

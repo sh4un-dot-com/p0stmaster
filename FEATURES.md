@@ -206,8 +206,10 @@ Never lose work and always know what happened.
 All app state is stored locally with no cloud dependency.
 
 - **AES-256-GCM encryption** — vault is encrypted with a PBKDF2-derived key (250,000 iterations, SHA-256)
+- **Per-install vault key** — a random local key is generated on first run (not hardcoded in source)
+- **Desktop key protection** — Electron stores the vault key with OS `safeStorage` when available
 - **Persisted data** — config, current draft, draft history, action log, plans, trends, feeds, theme
-- **Browser storage backend** — works in both Electron and browser modes
+- **Storage backends** — web mode uses browser `localStorage`; desktop mode stores the encrypted vault in the app user-data directory
 - **No account required** — no sign-up, no login, no server-side storage
 
 ---
