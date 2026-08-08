@@ -9,3 +9,9 @@ yarn-error.log*
 .env
 .env.*
 !.env.example
+.vscode/
+.idea/
+*.log
+*.pem
+*.key
+*.local

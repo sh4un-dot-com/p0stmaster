@@ -23,11 +23,11 @@ Each outline includes:
 
 Use these ideas across every flyer so the generated copy feels specific, credible, and differentiated.
 
-- **One operator cockpit, not five disconnected tools** — position p0stmaster as the control center that replaces tab chaos, copy-paste work, and seat-based SaaS sprawl
+- **One operator cockpit, not five disconnected tools** — position p0stmaster as the control center that replaces tab chaos and copy-paste workflows
 - **AI that adds leverage after the first draft** — emphasize hooks, platform rewrites, critique, audience angles, threads, and calendars, not just "AI writing"
 - **Trend Spark = timeliness** — live feeds become usable post angles instead of passive dashboards
 - **Critique before publish = fewer weak posts** — catch soft hooks, vague CTAs, and weak platform fit before approval or publish
-- **Your keys. Your data. No seat tax.** — open source, local encrypted storage, and provider choice are practical advantages, not philosophical fluff
+- **Your keys. Your data.** — open source, local encrypted storage, and provider choice are practical advantages, not philosophical fluff
 
 ### Prompt guardrails
 
@@ -46,7 +46,7 @@ Use these ideas across every flyer so the generated copy feels specific, credibl
 
 **Headline:** Stop Juggling Logins. Start Shipping Content.
 
-**Tagline:** One desktop. Every client. Seven platforms. Zero per-seat fees.
+**Tagline:** One desktop. Every client. Seven platforms. One local workspace.
 
 **Key selling points:**
 1. Isolated multi-client workspaces — separate brands, credentials, and governance per client
@@ -62,7 +62,7 @@ Use these ideas across every flyer so the generated copy feels specific, credibl
 - Agency desk scene with multiple brand logos organized in a clean grid
 - "Before/After" concept: tangled browser tabs vs. one clean p0stmaster window
 
-**Call to action:** Download free at github.com/AkitaEngineering/p0stmaster
+**Call to action:** Download from github.com/AkitaEngineering/p0stmaster
 
 ---
 
@@ -77,7 +77,7 @@ Layout:
 - Top: Bold headline "Stop Juggling Logins. Start Shipping Content." in white sans-serif
 - Center: App screenshot mockup showing a two-panel interface — content composer on the left, platform previews (Instagram, Facebook, LinkedIn, X, TikTok, YouTube, Pinterest) on the right, with the AI Studio panel open
 - Left column: 5 bullet points with small icons (workspace grid, AI spark, trend pulse, critique shield, publish arrow)
-- Bottom: CTA button "Download Free" with GitHub URL
+- Bottom: CTA button "Download" with GitHub URL
 - Bottom corner: "Built by Akita Engineering" in small text
 
 Mood: Professional, powerful, no-nonsense. Aimed at agencies who manage 10+ brand accounts and care about speed, control, and review quality.
@@ -91,7 +91,7 @@ Write flyer copy for p0stmaster, an open-source desktop app for social media age
 
 Product: p0stmaster — a desktop and browser-based social media command center that lets agencies manage multiple client workspaces, use AI Studio for drafts, hooks, per-platform rewrites, critiques, and calendars (OpenAI/Gemini/Claude), preview posts across 7 platforms in real time, and publish through Ayrshare — all from one window.
 
-Target audience: Social media agency owners and managers (5-50 person agencies) who currently pay $200-500/month for per-seat SaaS tools.
+Target audience: Social media agency owners and managers who need faster content workflows, stronger review controls, and one place to manage all client work.
 
 Tone: Confident, direct, slightly irreverent. Not corporate-speak.
 
@@ -119,9 +119,9 @@ Do NOT include: pricing (it's free), technical jargon, anything that sounds like
 
 ### Content outline
 
-**Headline:** Your Entire Social Workflow. One Free App.
+**Headline:** Your Entire Social Workflow. One App.
 
-**Tagline:** Plan, write, preview, and publish — without five open tabs and a monthly bill.
+**Tagline:** Plan, write, preview, and publish — without five open tabs or extra tools.
 
 **Key selling points:**
 1. AI Studio writes hooks, first drafts, and rewrites when you need momentum fast
@@ -137,7 +137,7 @@ Do NOT include: pricing (it's free), technical jargon, anything that sounds like
 - Emphasis on simplicity and speed
 - Light theme screenshot to feel accessible
 
-**Call to action:** Try it now — github.com/AkitaEngineering/p0stmaster
+**Call to action:** Visit github.com/AkitaEngineering/p0stmaster
 
 ---
 
@@ -149,7 +149,7 @@ Design a clean, modern product flyer for "p0stmaster", a free social media manag
 Style: Light and approachable with tech-forward accents. White background with indigo (#6366F1) highlights and soft shadows.
 
 Layout:
-- Top: Headline "Your Entire Social Workflow. One Free App." in bold, dark sans-serif
+- Top: Headline "Your Entire Social Workflow. One App." in bold, dark sans-serif
 - Center: Laptop mockup on a minimalist desk showing the p0stmaster light-theme interface
 - Floating around the laptop: 7 social platform icons (Instagram pink, Facebook blue, LinkedIn blue, X dark, Pinterest red, YouTube red, TikTok gradient) with subtle glow effects
 - Right side: 5 selling points with checkmark icons
@@ -165,7 +165,7 @@ Dimensions: Instagram story (1080x1920) and standard letter (8.5x11)
 ```
 Write flyer copy for p0stmaster targeting freelance social media managers.
 
-Product: A free, open-source desktop app that combines AI Studio drafting, hooks, critique, and rewrites, multi-platform previews, and one-click publishing to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok.
+Product: An open-source desktop app that combines AI Studio drafting, hooks, critique, and rewrites, multi-platform previews, and one-click publishing to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok.
 
 Target audience: Solo freelancers and small content creators who manage 1-5 client accounts and currently piece together workflows with native platform tools, Google Docs, and Canva.
 
@@ -193,9 +193,9 @@ Format: Ready to paste into Canva or a flyer design tool
 
 ### Content outline
 
-**Headline:** Governance-Ready Social Publishing. No SaaS Lock-In.
+**Headline:** Governance-Ready Social Publishing.
 
-**Tagline:** Approval workflows, brand compliance, and multi-workspace isolation — running on your own infrastructure.
+**Tagline:** Approval workflows, brand compliance, and multi-workspace isolation — built for local teams.
 
 **Key selling points:**
 1. Built-in approval workflow: draft → review → approve → publish
@@ -210,7 +210,7 @@ Format: Ready to paste into Canva or a flyer design tool
 - Muted blue and white palette with professional typography
 - Workflow diagram showing draft → pending → approved → published
 - Shield/lock icon emphasising data privacy
-- Comparison table: p0stmaster vs. typical SaaS (highlighting data control, cost, and governance)
+- Feature table showing data control, governance, and local-first deployment
 
 **Call to action:** Evaluate p0stmaster — github.com/AkitaEngineering/p0stmaster
 
@@ -224,10 +224,10 @@ Design a professional enterprise flyer for "p0stmaster", an open-source social m
 Style: Corporate-clean with a trust-oriented palette. White background, slate (#334155) text, blue (#3B82F6) accents. Think "enterprise software brochure" not "startup landing page."
 
 Layout:
-- Top: Company logo area + headline "Governance-Ready Social Publishing. No SaaS Lock-In."
+- Top: Company logo area + headline "Governance-Ready Social Publishing."
 - Upper section: Horizontal workflow diagram (Draft → Review → Approve → Publish) with icons
 - Middle: Three-column feature grid with icons — (1) Approval workflows (2) Brand compliance (3) Data privacy
-- Lower section: Two-column comparison table "p0stmaster vs. Typical SaaS" highlighting: cost ($0 vs $X/seat/mo), data location (your machine vs their cloud), governance (built-in vs add-on), audit (open source vs closed)
+- Lower section: Feature table showing local data control, governance, and deployment flexibility
 - Bottom: CTA "Schedule an evaluation" with GitHub link and QR code
 
 Mood: Trustworthy, serious, "this won't get us in trouble with compliance"
@@ -241,7 +241,7 @@ Write flyer copy for p0stmaster aimed at in-house marketing teams at mid-size co
 
 Product: An open-source, self-hosted social media workspace with built-in approval workflows, critique-driven review, brand safety scanning, multi-workspace isolation, AI Studio workflows (OpenAI/Gemini/Claude), and live publishing to 7 platforms.
 
-Target audience: Marketing directors and team leads who need governance controls, are concerned about data leaving the org, and are tired of paying per-seat SaaS fees for social media tools.
+Target audience: Marketing directors and team leads who need governance controls, are concerned about data ownership, and want a more transparent, local-first workflow.
 
 Tone: Professional, reassuring, evidence-based. No hype. The reader needs to trust this enough to bring it to their VP.
 
@@ -267,7 +267,7 @@ Avoid: Casual language, "disruptive" claims, anything that sounds like a startup
 
 **Headline:** Seven Platforms. AI Studio. One App.
 
-**Tagline:** The open-source social media workspace that does what the $500/month tools do — for free.
+**Tagline:** The open-source social media workspace built for local teams.
 
 **Feature grid (9 tiles):**
 
@@ -288,7 +288,7 @@ Avoid: Casual language, "disruptive" claims, anything that sounds like a startup
 - 3×3 grid of feature tiles with icons and one-line descriptions
 - Dark theme screenshot as centre hero image
 - Platform logos along the bottom
-- Comparison stat: "$0/month. Unlimited users. Open source."
+- Comparison stat: "Local install. Unlimited users. Open source."
 
 **Call to action:** Get p0stmaster free — github.com/AkitaEngineering/p0stmaster
 
@@ -319,7 +319,7 @@ Dimensions: 8.5 x 11 inches portrait
 ### AI Copywriter Prompt
 
 ```
-Write a feature-showcase flyer for p0stmaster aimed at product-aware buyers comparing it to paid social media tools.
+Write a feature-showcase flyer for p0stmaster aimed at product-aware buyers evaluating social media workflows.
 
 Product: p0stmaster — an open-source social media workspace with AI Studio (drafts, hooks, critiques, per-platform rewrites, audiences, threads, and calendars), Live Feed Pulse with Trend Spark, approval workflows, encrypted local storage, and 7-platform publishing.
 
@@ -383,7 +383,7 @@ Mood: Punchy, confident, scroll-stopping
 ```
 Write 3 variations of social media ad copy for p0stmaster.
 
-Product: Free, open-source desktop app for planning, previewing, and publishing social content to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok — with AI Studio and multi-client workspaces.
+Product: Open-source desktop app for planning, previewing, and publishing social content to Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, and TikTok — with AI Studio and multi-client workspaces.
 
 Format per variation:
 - Primary text (125 characters max — Facebook/Instagram feed)
@@ -400,50 +400,47 @@ Variation angles:
 
 ---
 
-## Flyer 6: The Comparison Sheet
+## Flyer 6: The Capabilities Summary
 
-**Target audience:** Decision-makers comparing tools
+**Target audience:** Decision-makers evaluating social media workflow tools
 
 ### Content outline
 
-**Headline:** p0stmaster vs. The Paid Tools
+**Headline:** p0stmaster Feature Summary
 
-**Comparison table:**
+**Feature table:**
 
-| Feature | p0stmaster | Hootsuite | Buffer | Sprout Social |
-|---|---|---|---|---|
-| Price | Free | $99-739/mo | $6-120/mo | $249-499/mo |
-| Platforms | 7 | 8+ | 6 | 8+ |
-| AI Studio workflows | Built-in (3 providers) | Add-on | Limited | Add-on |
-| Trend-led ideation | Live Feed Pulse + Trend Spark | Manual / separate tooling | Manual / separate tooling | Manual / separate tooling |
-| Multi-client workspaces | Unlimited | Limited by plan | Limited | Limited by plan |
-| Approval workflow | Built-in | Team plan+ | Business plan+ | All plans |
-| Data storage | Local (encrypted) | Cloud | Cloud | Cloud |
-| Open source | Yes | No | No | No |
-| Self-hosted | Yes | No | No | No |
+| Feature | p0stmaster |
+|---|---|
+| Platforms supported | Instagram, Facebook, LinkedIn, X, Pinterest, YouTube, TikTok |
+| AI Studio workflows | Built-in support for OpenAI, Gemini, and Claude |
+| Trend-led ideation | Live Feed Pulse + Trend Spark for feed-based content ideas |
+| Multi-client workspaces | Separate brands, keys, accounts, and governance per workspace |
+| Approval workflow | Draft → review → approve → publish built in |
+| Data storage | Local and encrypted with AES-256-GCM |
+| Open source | Yes |
+| Self-hosted | Yes |
+| Desktop + browser | Electron + localhost support |
 
-**Disclaimer:** Feature comparison as of 2026. Paid tool pricing and features may vary.
-
-**Call to action:** Try the free alternative — github.com/AkitaEngineering/p0stmaster
+**Call to action:** Evaluate p0stmaster on your own machine — github.com/AkitaEngineering/p0stmaster
 
 ---
 
 ### AI Copywriter Prompt
 
 ```
-Write a one-page comparison flyer positioning p0stmaster against paid social media management tools (Hootsuite, Buffer, Sprout Social).
+Write a one-page capabilities summary flyer for p0stmaster.
 
-Product: p0stmaster — free, open-source, desktop + browser social media workspace with AI Studio (3 providers), Trend Spark, 7-platform publishing, multi-client workspaces, approval workflows, and encrypted local storage.
+Product: p0stmaster — open-source desktop and browser social media workflow software with AI Studio (OpenAI, Gemini, Claude), Trend Spark, 7-platform publishing, multi-client workspaces, approval workflows, and encrypted local storage.
 
 Format:
-- Headline comparing p0stmaster to paid alternatives
-- Brief intro paragraph (2-3 sentences) about why the comparison matters
-- Comparison table with 9 features compared across 4 tools
-- A "When to choose p0stmaster" paragraph (3-4 sentences)
-- A "When a paid tool might be better" paragraph (1-2 sentences — shows honesty)
+- Headline introducing p0stmaster's capabilities
+- Brief intro paragraph (2-3 sentences) about what this tool helps teams do
+- Feature table with 9 capabilities and concise descriptions
+- A short recommendation paragraph describing when to evaluate p0stmaster
 - CTA to download
 
-Tone: Fair and factual, not aggressive. The confidence comes from the feature comparison speaking for itself.
+Tone: Clear, practical, product-focused. Avoid hype, pricing claims, and competitor comparisons.
 ```
 
 ---

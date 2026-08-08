@@ -11,7 +11,7 @@
 
 # p0stmaster
 
-**p0stmaster** is a desktop and browser-based social-media command center for agencies, freelancers, and in-house marketing teams. Plan campaigns, generate and pressure-test content with AI Studio, preview posts across seven platforms in real time, and publish - all from one window.
+**p0stmaster** is a desktop and browser-based social-media command center for agencies, freelancers, and in-house marketing teams. Plan campaigns, generate and pressure-test content with AI Studio, preview posts across seven platforms in real time, and publish — all from one window.
 
 Built by [Akita Engineering](https://github.com/AkitaEngineering).
 
@@ -170,7 +170,7 @@ styles/tailwind.css     Tailwind source stylesheet
 ## Operational Notes
 
 - All data persists locally in an encrypted vault (AES-256-GCM); web mode stores it in browser localStorage and desktop mode stores it in the app user-data directory
-- The vault passphrase is currently defined in source code — future releases will migrate to OS-native secret storage
+- The vault uses a randomly generated local encryption key per installation; if local storage is cleared, the encrypted vault becomes unrecoverable
 - macOS builds are unsigned: Gatekeeper will require right-click → Open or Open Anyway on first launch
 - Windows builds are unsigned: SmartScreen will require More info → Run anyway on first launch
 

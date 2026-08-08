@@ -145,11 +145,9 @@ Persisted areas include:
 - last-opened configuration tab
 - brand-kit analysis state
 
-The vault uses encrypted storage, but there is an important limitation:
+The vault uses encrypted storage with a locally generated per-install key. The key is stored locally and is not included in source control.
 
-- the passphrase is currently defined in source code rather than injected from environment or OS-native secret storage
-
-That means the vault is protected against casual local inspection, but it should not yet be treated as hardened secret management.
+That means the vault is protected against casual local inspection, but it does not replace OS-native secret management or device-level disk encryption.
 
 ## Build and Packaging
 
@@ -206,7 +204,7 @@ Current behavior:
 
 ## Good Next Hardening Steps
 
-- move the vault passphrase out of source
+- add OS-native secure storage for provider credentials and vault key management
 - add OS-native secure storage for provider credentials
 - split application state from view logic in `p0stmaster.jsx` as the codebase grows
 - add automated tests around publish gating and feed normalization
